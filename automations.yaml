@@ -1,0 +1,928 @@
+- id: '1765594773184'
+  alias: Comfort Log - Detect Nest setpoint change
+  description: Log every Nest setpoint adjustment as a notification
+  triggers:
+  - entity_id: climate.thermostat
+    attribute: temperature
+    trigger: state
+  actions:
+  - data:
+      title: Comfort Log
+      message: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }} | Mode: {{ trigger.to_state.attributes.hvac_mode
+        | default(''unknown'') }} | Temp: {{ trigger.to_state.attributes.temperature
+        | default(''n/a'') }}°F | Source: Nest
+
+        '
+    action: persistent_notification.create
+  mode: single
+- id: '1765606541050'
+  alias: Winter Evening (5 - 11 PM)
+  description: Set Nest to 70°F every evening in winter months
+  triggers:
+  - at: '17:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_evenings
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_evening_temp'') | float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_evening_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_evening_temp'') }}°F — {{ now().isoformat()
+            }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_evening
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_evenings
+        action: input_boolean.turn_off
+  mode: single
+- id: '1765606930764'
+  alias: Winter Morning Comfort (6 - 10 AM)
+  description: Set Nest to the morning comfort temperature during winter months
+  triggers:
+  - at: 06:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_morning_comfort
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_morning_comfort_temp'') |
+            float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_morning_comfort_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_morning_comfort_temp'') }}°F
+            — {{ now().isoformat() }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_morning_comfort
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_morning_comfort
+        action: input_boolean.turn_off
+  mode: single
+- id: '1765607045643'
+  alias: Winter Overnight (11 PM - 6 AM)
+  description: Set Nest to the overnight temperature during winter months
+  triggers:
+  - at: '23:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_overnight
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_overnight_temp'') | float
+            }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_overnight_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_overnight_temp'') }}°F — {{
+            now().isoformat() }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_overnight
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_overnight
+        action: input_boolean.turn_off
+  mode: single
+- id: '1766118393749'
+  alias: Lights On When Dark (Tempest)
+  description: Turn on Office lights at 100% brightness when Tempest reports low lux
+  triggers:
+  - entity_id: sensor.st_00196977_illuminance
+    below: 1500
+    trigger: numeric_state
+  conditions:
+  - condition: sun
+    after: sunrise
+    before: sunset
+  actions:
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.lamp1
+      - light.lamp2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.lamp1
+      - light.lamp2
+    data:
+      brightness_pct: 100
+  mode: restart
+- id: '1766118527127'
+  alias: Lights Off When Bright (Tempest)
+  description: Turn off Office lights when Tempest reports high lux
+  triggers:
+  - entity_id: sensor.st_00196977_illuminance
+    above: 10000
+    trigger: numeric_state
+  conditions:
+  - condition: sun
+    after: sunrise
+    before: sunset
+  actions:
+  - target:
+      entity_id:
+      - light.lamp1
+      - light.lamp2
+    action: light.turn_off
+    data: {}
+  mode: restart
+- id: '1766214300212'
+  alias: Winter Sunny Heating
+  description: Boost heat to 70°F when winter sun is strong
+  triggers:
+  - entity_id:
+    - sensor.st_00196977_irradiance
+    above: 350
+    trigger: numeric_state
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}
+
+      '
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: time
+    after: '10:00:00'
+    before: '17:00:00'
+  - condition: template
+    value_template: "{{ state_attr('automation.winter_sunny_heating','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_sunny_heating','last_triggered')))
+      > 1800 }}\n\n"
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 70
+    action: climate.set_temperature
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: HEAT 70°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+    target:
+      entity_id: input_text.winter_sunny_heating_log
+  mode: single
+- id: '1766214492841'
+  alias: Winter Cloudy Heating
+  description: Lower heat to 68°F when winter sun becomes weak
+  triggers:
+  - entity_id:
+    - sensor.st_00196977_irradiance
+    below: 150
+    trigger: numeric_state
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}
+
+      '
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: time
+    after: '10:00:00'
+    before: '17:00:00'
+  - condition: template
+    value_template: "{{ state_attr('automation.winter_cloudy_heating','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_cloudy_heating','last_triggered')))
+      > 1800 }}\n\n"
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 68
+    action: climate.set_temperature
+  - action: input_text.set_value
+    metadata: {}
+    target:
+      entity_id: input_text.winter_cloudy_heating_log
+    data:
+      value: HEAT 68°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  mode: single
+- id: '1766214814422'
+  alias: Winter Mode Activation
+  description: Set thermostat to Heat mode and 68°F every November 1st at 5 AM
+  triggers:
+  - at: 05:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month == 11 and now().day == 1 }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 68
+    action: climate.set_temperature
+  mode: single
+- id: '1766215066594'
+  alias: Spring Shoulder Season Activation
+  description: Set thermostat to HEAT/COOL mode with 68–72°F band every April 1st
+    at 5 AM
+  triggers:
+  - at: 05:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month == 4 and now().day == 1 }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: 68
+      target_temp_high: 72
+    action: climate.set_temperature
+  mode: single
+- id: '1766215215363'
+  alias: Fall Shoulder Season Activation
+  description: Set thermostat to HEAT/COOL mode with 68–72°F band every September
+    1st at 5 AM
+  triggers:
+  - at: 05:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month == 9 and now().day == 1 }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: 68
+      target_temp_high: 72
+    action: climate.set_temperature
+  mode: single
+- id: '1767155567195'
+  alias: Summer Mode Activation
+  description: Set thermostat to Cool mode and 72°F every June 1st at 5 AM
+  triggers:
+  - at: 05:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month == 6 and now().day == 1 }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 72
+    action: climate.set_temperature
+  mode: single
+- id: '1767160277785'
+  alias: Winter Weekday Daytime (10 AM–5 PM)
+  description: Set Nest to the weekday daytime temperature during winter months
+  triggers:
+  - at: '10:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] and now().weekday() in [0,
+      1, 2, 3, 4] }}
+
+      '
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_weekday_daytime
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_weekday_daytime_temp'') |
+            float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_weekday_daytime_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_weekday_daytime_temp'') }}°F
+            — {{ now().isoformat() }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_weekday_daytime
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_weekday_daytime
+        action: input_boolean.turn_off
+  mode: single
+- id: '1767160448134'
+  alias: Winter Weekend Daytime (10 AM–5 PM)
+  description: Set Nest to the weekend daytime temperature during winter months
+  triggers:
+  - at: '10:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] and now().weekday() in [5,
+      6] }}
+
+      '
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_weekend_daytime
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_weekend_daytime_temp'') |
+            float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_weekend_daytime_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_weekend_daytime_temp'') }}°F
+            — {{ now().isoformat() }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_weekend_daytime
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_weekend_daytime
+        action: input_boolean.turn_off
+  mode: single
+- id: '1767161296523'
+  alias: Summer Overnight (11 PM – 6 AM)
+  description: Set Nest to the overnight temperature during summer months
+  triggers:
+  - at: '23:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_summer_overnight
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.summer_overnight_temp'') | float
+            }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.summer_overnight_log
+        data:
+          value: 'COOL {{ states(''input_number.summer_overnight_temp'') }}°F — {{
+            now().isoformat() }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: summer_overnight
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_summer_overnight
+        action: input_boolean.turn_off
+  mode: single
+- id: '1767161429203'
+  alias: Summer Evening (8 PM – 11 PM)
+  description: Set Nest to the evening temperature during summer months
+  triggers:
+  - at: '20:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_summer_evening
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.summer_evening_temp'') | float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.summer_evening_log
+        data:
+          value: 'COOL {{ states(''input_number.summer_evening_temp'') }}°F — {{ now().isoformat()
+            }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: summer_evening
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_summer_evening
+        action: input_boolean.turn_off
+  mode: single
+- id: '1767161537152'
+  alias: Summer Morning Comfort (6 AM – 10 AM)
+  description: Set Nest to the morning comfort temperature during summer months
+  triggers:
+  - at: 06:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_summer_morning_comfort
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.summer_morning_comfort_temp'') |
+            float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.summer_morning_comfort_log
+        data:
+          value: 'COOL {{ states(''input_number.summer_morning_comfort_temp'') }}°F
+            — {{ now().isoformat() }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: summer_morning_comfort
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_summer_morning_comfort
+        action: input_boolean.turn_off
+  mode: single
+- id: '1767161626751'
+  alias: Summer Baseline (10 AM – 8 PM)
+  description: Set Nest to the daytime baseline temperature during summer months
+  triggers:
+  - at: '10:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_summer_baseline
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.summer_baseline_temp'') | float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.summer_baseline_log
+        data:
+          value: 'COOL {{ states(''input_number.summer_baseline_temp'') }}°F — {{
+            now().isoformat() }}
+
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: summer_baseline
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_summer_baseline
+        action: input_boolean.turn_off
+  mode: single
+- id: '1767161805534'
+  alias: Summer Sunny Cooling
+  description: Cool to 72°F when summer sun is strong
+  triggers:
+  - entity_id:
+    - sensor.st_00196977_illuminance
+    above: 350
+    trigger: numeric_state
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}
+
+      '
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: time
+    after: '10:00:00'
+    before: '20:00:00'
+  - condition: template
+    value_template: "{{ state_attr('automation.summer_sunny_cooling','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_sunny_cooling','last_triggered')))
+      > 1800 }}\n"
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 72
+    action: climate.set_temperature
+  - action: input_text.set_value
+    metadata: {}
+    target:
+      entity_id: input_text.summer_sunny_cooling_log
+    data:
+      value: COOL 72°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  mode: single
+- id: '1767161991146'
+  alias: Summer Cloudy Cooling
+  description: Cool to 74°F on cloudy summer days
+  triggers:
+  - entity_id:
+    - sensor.st_00196977_illuminance
+    below: 200
+    trigger: numeric_state
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}
+
+      '
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: time
+    after: '10:00:00'
+    before: '20:00:00'
+  - condition: template
+    value_template: "{{ state_attr('automation.summer_cloudy_cooling','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_cloudy_cooling','last_triggered')))
+      > 1800 }}\n\n"
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 74
+    action: climate.set_temperature
+  - action: input_text.set_value
+    metadata: {}
+    target:
+      entity_id: input_text.summer_cloudy_cooling_log
+    data:
+      value: COOL 74°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  mode: single
+- id: '1767162828170'
+  alias: Spring Temperature Baseline (10 AM – 8 PM)
+  description: Set Nest to HEAT/COOL mode with 68–74°F band during spring daytime
+    hours
+  triggers:
+  - at: '10:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [4, 5] }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: 68
+      target_temp_high: 74
+    action: climate.set_temperature
+  mode: single
+- id: '1767162914113'
+  alias: Fall Temperature Baseline (10 AM – 8 PM)
+  description: Set Nest to HEAT/COOL mode with 68–74°F band during fall daytime hours
+  triggers:
+  - at: '10:00:00'
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [9, 10] }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: 68
+      target_temp_high: 74
+    action: climate.set_temperature
+  mode: single
+- id: '1767163393411'
+  alias: Spring Cooling Nudge (Warm Shoulder Days)
+  description: Set Nest to HEAT/COOL 66–72°F when spring temps exceed 75°F
+  triggers:
+  - entity_id: sensor.st_00196977_temperature
+    above: 75
+    trigger: numeric_state
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [4, 5] }}
+
+      '
+  - condition: time
+    after: '10:00:00'
+    before: '20:00:00'
+  - condition: template
+    value_template: "{{ state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')))
+      > 1800 }}\n"
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: 66
+      target_temp_high: 72
+    action: climate.set_temperature
+  mode: single
+- id: '1767163422105'
+  alias: Fall Cooling Nudge (Warm Shoulder Days)
+  description: Set Nest to HEAT/COOL 66–72°F when fall temps exceed 75°F
+  triggers:
+  - entity_id: sensor.st_00196977_temperature
+    above: 75
+    trigger: numeric_state
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [9, 10] }}
+
+      '
+  - condition: time
+    after: '10:00:00'
+    before: '20:00:00'
+  - condition: template
+    value_template: "{{ state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')))
+      > 1800 }}\n"
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: 66
+      target_temp_high: 72
+    action: climate.set_temperature
+  mode: single
+- id: '1767163618085'
+  alias: Spring Heating Nudge (Cool Shoulder Days)
+  description: Set Nest to HEAT/COOL 70–76°F when spring temps drop below 55°F
+  triggers:
+  - entity_id: sensor.st_00196977_temperature
+    below: 55
+    trigger: numeric_state
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [4, 5] }}
+
+      '
+  - condition: time
+    after: '10:00:00'
+    before: '20:00:00'
+  - condition: template
+    value_template: "{{ state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')))
+      > 1800 }}\n"
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: 70
+      target_temp_high: 76
+    action: climate.set_temperature
+  mode: single
+- id: '1767163652747'
+  alias: Fall Heating Nudge (Cool Shoulder Days)
+  description: Set Nest to HEAT/COOL 70–76°F when fall temps drop below 55°F
+  triggers:
+  - entity_id: sensor.st_00196977_temperature
+    below: 55
+    trigger: numeric_state
+  conditions:
+  - condition: template
+    value_template: '{{ now().month in [9, 10] }}
+
+      '
+  - condition: time
+    after: '10:00:00'
+    before: '20:00:00'
+  - condition: template
+    value_template: "{{ state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')))
+      > 1800 }}\n"
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: 70
+      target_temp_high: 76
+    action: climate.set_temperature
+  mode: single
+- id: '1769406598805'
+  alias: Temporary Comfort Reset Automation
+  triggers:
+  - event_type: timer.finished
+    event_data:
+      entity_id: timer.temporary_comfort_timer
+    trigger: event
+  actions:
+  - action: script.temporary_comfort_reset
+  mode: single
+- id: '1769669617835'
+  alias: Update the countdown every second
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    seconds: /1
+  conditions: []
+  actions:
+  - action: homeassistant.update_entity
+    metadata: {}
+    data:
+      entity_id:
+      - sensor.boost_countdown
+  mode: single
