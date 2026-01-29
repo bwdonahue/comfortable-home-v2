@@ -1,0 +1,35 @@
+# Home Assistant core files to ignore
+*.db
+*.db-shm
+*.db-wal
+home-assistant_v2.db
+home-assistant.log
+home-assistant.log.*
+secrets.yaml
+.cloud/
+.storage/
+tts/
+deps/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+*.pid
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Backups
+backup/
+backups/
+*.tar
+*.tar.gz
+
+# OS / system files
+.DS_Store
+Thumbs.db
