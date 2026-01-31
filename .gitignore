@@ -1,0 +1,62 @@
+# Home Assistant database files
+home-assistant_v2.db
+home-assistant_v2.db-shm
+home-assistant_v2.db-wal
+*.db
+*.db-shm
+*.db-wal
+
+# Storage (auth tokens, device registry, UI layout, etc.)
+.storage/
+
+
+# Logs
+home-assistant.log
+home-assistant.log.*
+*.log
+
+# Secrets
+secrets.yaml
+
+# Backups
+backup/
+backups/
+*.tar
+*.tar.gz
+
+# Add-on data
+addons/
+share/
+ssl/
+
+# Cloud / voice assistant tokens
+.cloud/
+.google.token
+.google.token.*
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Temporary / swap files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.pid
+
+# SQLite variants
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# HA-generated directories
+deps/
+tts/
+www/community/.storage/
+
+# OS / system files
+.DS_Store
+Thumbs.db
