@@ -1,0 +1,12 @@
+{
+  "domain": "cielo_home",
+  "name": "Cielo Home",
+  "codeowners": ["@bodyscape"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/bodyscape/cielo_home",
+  "iot_class": "cloud_push",
+  "issue_tracker": "https://github.com/bodyscape/cielo_home/issues",
+  "requirements": [],
+  "version": "1.8.9"
+}

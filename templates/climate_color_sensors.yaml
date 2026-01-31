@@ -1,0 +1,126 @@
+- sensor:
+    # -------------------------
+    # WINTER MORNING COMFORT
+    # -------------------------
+    - name: winter_morning_comfort_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_winter_morning_comfort', 'on') %}
+          red
+        {% elif active == 'winter_morning_comfort' %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # -------------------------
+    # WINTER WEEKDAY DAYTIME
+    # -------------------------
+    - name: winter_weekday_daytime_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_winter_weekday_daytime', 'on') %}
+          red
+        {% elif active == 'winter_weekday_daytime' %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # -------------------------
+    # WINTER WEEKEND DAYTIME
+    # -------------------------
+    - name: winter_weekend_daytime_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_winter_weekend_daytime', 'on') %}
+          red
+        {% elif active == 'winter_weekend_daytime' %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # -------------------------
+    # WINTER EVENING
+    # -------------------------
+    - name: winter_evening_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_winter_evenings', 'on') %}
+          red
+        {% elif active == 'winter_evening' %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # -------------------------
+    # WINTER OVERNIGHT
+    # -------------------------
+    - name: winter_overnight_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_winter_overnight', 'on') %}
+          red
+        {% elif active == 'winter_overnight' %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # -------------------------
+    # SUMMER MORNING COMFORT
+    # -------------------------
+    - name: summer_morning_comfort_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_summer_morning_comfort', 'on') %}
+          red
+        {% elif active == 'summer_morning_comfort' %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # -------------------------
+    # SUMMER BASELINE
+    # -------------------------
+    - name: summer_baseline_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_summer_baseline', 'on') %}
+          red
+        {% elif active == 'summer_baseline' %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # -------------------------
+    # SUMMER EVENING
+    # -------------------------
+    - name: summer_evening_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_summer_evening', 'on') %}
+          red
+        {% elif active == 'summer_evening' %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # -------------------------
+    # SUMMER OVERNIGHT
+    # -------------------------
+    - name: summer_overnight_color
+      state: >
+        {% set active = states('input_text.current_active_automation') %}
+        {% if is_state('input_boolean.skipped_summer_overnight', 'on') %}
+          red
+        {% elif active == 'summer_overnight' %}
+          green
+        {% else %}
+          grey
+        {% endif %}

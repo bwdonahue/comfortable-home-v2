@@ -1,0 +1,36 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+template: !include templates/climate_color_sensors.yaml
+notify:
+  - name: sendgrid
+    platform: sendgrid
+    api_key: !secret sendgrid_api_key
+    sender: homeassistant@realdeep.net
+    recipient: bryandonahue@gmail.com
+rest_command:
+  sendgrid_html:
+    url: "https://api.sendgrid.com/v3/mail/send"
+    method: POST
+    headers:
+      Authorization: !secret sendgrid_bearer
+      Content-Type: "application/json"
+    payload: >
+      {
+        "personalizations": [{
+          "to": [{"email": "bryandonahue@gmail.com"}]
+        }],
+        "from": {"email": "homeassistant@realdeep.net"},
+        "subject": "{{ subject }}",
+        "content": [{
+          "type": "text/html",
+          "value": {{ body | tojson }}
+        }]
+      }

@@ -1,0 +1,10 @@
+9D:41:D4:AD:FC:5C:8B:D2:
+  set_brightness_max:
+  get_brightness_max: 100
+  before_set_brightness_turn_on: false
+  config_offline_is_off: false
+2F:D0:C8:39:33:30:24:5B:
+  set_brightness_max:
+  get_brightness_max: 100
+  before_set_brightness_turn_on: false
+  config_offline_is_off: false
