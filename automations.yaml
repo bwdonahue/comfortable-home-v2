@@ -203,73 +203,99 @@
   alias: Winter Sunny Heating
   description: Boost heat to 70°F when winter sun is strong
   triggers:
-  - entity_id:
-    - sensor.st_00196977_irradiance
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_irradiance
     above: 350
-    trigger: numeric_state
+  - trigger: time_pattern
+    minutes: /5
   conditions:
   - condition: template
-    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}
-
-      '
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
   - condition: time
     after: '10:00:00'
     before: '17:00:00'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_irradiance
+    above: 350
   - condition: template
     value_template: "{{ state_attr('automation.winter_sunny_heating','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_sunny_heating','last_triggered')))
-      > 1800 }}\n\n"
+      > 1800 }}\n"
   actions:
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
       temperature: 70
-    action: climate.set_temperature
   - action: input_text.set_value
-    metadata: {}
-    data:
-      value: HEAT 70°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
     target:
       entity_id: input_text.winter_sunny_heating_log
+    data:
+      value: 'HEAT 70°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.winter_sunny_active
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.winter_cloudy_active
+  - delay: 01:00:00
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.winter_sunny_active
   mode: single
 - id: '1766214492841'
   alias: Winter Cloudy Heating
   description: Lower heat to 68°F when winter sun becomes weak
   triggers:
-  - entity_id:
-    - sensor.st_00196977_irradiance
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_irradiance
     below: 150
-    trigger: numeric_state
+  - trigger: time_pattern
+    minutes: /5
   conditions:
   - condition: template
-    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}
-
-      '
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
   - condition: time
     after: '10:00:00'
     before: '17:00:00'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_irradiance
+    below: 150
   - condition: template
     value_template: "{{ state_attr('automation.winter_cloudy_heating','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_cloudy_heating','last_triggered')))
-      > 1800 }}\n\n"
+      > 1800 }}\n"
   actions:
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
       temperature: 68
-    action: climate.set_temperature
   - action: input_text.set_value
-    metadata: {}
     target:
       entity_id: input_text.winter_cloudy_heating_log
     data:
-      value: HEAT 68°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+      value: 'HEAT 68°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.winter_cloudy_active
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.winter_sunny_active
+  - delay: 01:00:00
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.winter_cloudy_active
   mode: single
 - id: '1766214814422'
   alias: Winter Mode Activation
@@ -662,73 +688,99 @@
   alias: Summer Sunny Cooling
   description: Cool to 72°F when summer sun is strong
   triggers:
-  - entity_id:
-    - sensor.st_00196977_illuminance
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_illuminance
     above: 350
-    trigger: numeric_state
+  - trigger: time_pattern
+    minutes: /5
   conditions:
   - condition: template
-    value_template: '{{ now().month in [6, 7, 8] }}
-
-      '
+    value_template: '{{ now().month in [6, 7, 8] }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
   - condition: time
     after: '10:00:00'
     before: '20:00:00'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_illuminance
+    above: 350
   - condition: template
     value_template: "{{ state_attr('automation.summer_sunny_cooling','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_sunny_cooling','last_triggered')))
       > 1800 }}\n"
   actions:
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
       temperature: 72
-    action: climate.set_temperature
   - action: input_text.set_value
-    metadata: {}
     target:
       entity_id: input_text.summer_sunny_cooling_log
     data:
-      value: COOL 72°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+      value: 'COOL 72°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.summer_sunny_active
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.summer_cloudy_active
+  - delay: 01:00:00
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.summer_sunny_active
   mode: single
 - id: '1767161991146'
   alias: Summer Cloudy Cooling
   description: Cool to 74°F on cloudy summer days
   triggers:
-  - entity_id:
-    - sensor.st_00196977_illuminance
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_illuminance
     below: 200
-    trigger: numeric_state
+  - trigger: time_pattern
+    minutes: /5
   conditions:
   - condition: template
-    value_template: '{{ now().month in [6, 7, 8] }}
-
-      '
+    value_template: '{{ now().month in [6, 7, 8] }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
   - condition: time
     after: '10:00:00'
     before: '20:00:00'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_illuminance
+    below: 200
   - condition: template
     value_template: "{{ state_attr('automation.summer_cloudy_cooling','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_cloudy_cooling','last_triggered')))
-      > 1800 }}\n\n"
+      > 1800 }}\n"
   actions:
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
       temperature: 74
-    action: climate.set_temperature
   - action: input_text.set_value
-    metadata: {}
     target:
       entity_id: input_text.summer_cloudy_cooling_log
     data:
-      value: COOL 74°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+      value: 'COOL 74°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.summer_cloudy_active
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.summer_sunny_active
+  - delay: 01:00:00
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.summer_cloudy_active
   mode: single
 - id: '1767162828170'
   alias: Spring Temperature Baseline (10 AM – 8 PM)
@@ -940,12 +992,12 @@
     trigger: state
   actions:
   - data:
-      subject: Shoulder Season Mode Activated
+      subject: Fall Shoulder Season Activated
       body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
         20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-        \   <p>\n      Nest has switched into <b>AUTO mode</b> for the shoulder season.\n
-        \   </p>\n\n    <p>\n      This allows the system to automatically decide
-        whether to heat or cool based on indoor conditions.\n    </p>\n\n    <p><b>Shoulder
+        \   <p>\n      Nest has switched into <b>AUTO mode</b> for the fall shoulder
+        season.\n    </p>\n\n    <p>\n      This allows the system to automatically
+        decide whether to heat or cool based on indoor conditions.\n    </p>\n\n    <p><b>Shoulder
         season checklist:</b></p>\n\n    <ul>\n      <li>Uncover AC unit in backyard
         (system may cool on warm days)</li>\n      <li>Adjust vents to neutral or
         balanced flow</li>\n      <li>Keep whole-house humidifier OFF</li>\n      <li>\n
