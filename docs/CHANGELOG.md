@@ -3,6 +3,27 @@
 All notable changes to **Comfortable Home v2** are documented here.  
 This project follows a simple, milestone-based versioning style.
 
+## 2.5.1 — Seasonal Sunlight Engine + Dashboard Indicators (2026-01-31)
+
+### Added
+- Sunny/Cloudy indicator system using dedicated input_booleans for Winter and Summer modes
+- Mushroom dashboard cards for all four sunlight states with color‑coded icons and multiline logs
+- 1‑hour auto‑clear behavior for sunlight indicators
+- Visual feedback layer that mirrors real‑time sunlight logic without affecting seasonal mode
+
+### Improved
+- All four sunlight automations (Winter Sunny, Winter Cloudy, Summer Sunny, Summer Cloudy) now include:
+  - 5‑minute catch‑up triggers for reliable recovery after clouds or cooldown
+  - Boost‑aware conditions that fully pause sunlight logic during temporary overrides
+  - Clean, predictable behavior across all sun/cloud transitions
+- Dashboard readability and expressiveness through unified card layout and icon logic
+
+### Fixed
+- Eliminated edge cases where sunlight automations could fail to re‑trigger after cooldown or time windows
+- Ensured indicator lights never conflict with seasonal mode status
+
+---
+
 ## **v2.5 — Feb 2026**  
 **Seasonal Email Templates + SendGrid Delivery**
 
