@@ -923,39 +923,14 @@
   triggers:
   - trigger: time_pattern
     seconds: /1
-  conditions: []
+  conditions:
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'on'
   actions:
   - action: homeassistant.update_entity
-    metadata: {}
     data:
-      entity_id:
-      - sensor.boost_countdown
-  mode: single
-- id: '1769834611124'
-  alias: SendGrid HTML Test
-  description: Send Shoulder Season HTML email when button is pressed
-  triggers:
-  - entity_id: input_button.send_test_email
-    trigger: state
-  actions:
-  - data:
-      subject: Shoulder Season Mode Activated
-      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-        \   <p>\n      Nest has switched into <b>AUTO mode</b> for the shoulder season.\n
-        \   </p>\n\n    <p>\n      This allows the system to automatically decide
-        whether to heat or cool based on indoor conditions.\n    </p>\n\n    <p><b>Shoulder
-        season checklist:</b></p>\n\n    <ul>\n      <li>Uncover AC unit in backyard
-        (system may cool on warm days)</li>\n      <li>Adjust vents to neutral or
-        balanced flow</li>\n      <li>Keep whole-house humidifier OFF</li>\n      <li>\n
-        \       Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
-        login</a>)\n      </li>\n      <li>\n        Optional: schedule tune-up or
-        duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
-        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
-        both heating and cooling are available as the weather shifts.\n    </p>\n\n
-        \ </body>\n</html>\n"
-    action: rest_command.sendgrid_html
+      entity_id: sensor.boost_countdown
   mode: single
 - id: '1769840194726'
   alias: Send Fall Shoulder Email
