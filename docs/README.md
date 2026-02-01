@@ -82,7 +82,7 @@ Stability + Cleanup + UI Migration
 (v2.5 will be added when officially released — ongoing changes live in docs/CHANGELOG.md)
 
 📂 Repository Structure
-Code
+
 COMFORTABLE-HOME/
 │
 ├── .gitignore
@@ -122,6 +122,7 @@ COMFORTABLE-HOME/
                 ├── shoulder.html
                 ├── summer.html
                 └── winter.html
+
 🧠 Philosophy
 Comfortable Home v2 is built around:
 
