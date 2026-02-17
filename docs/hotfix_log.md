@@ -30,3 +30,6 @@ was attempting to send a string value instead of the required integer flag.
 
 ### Classification
 **Hotfix** — urgent, isolated, post‑migration patch.
+
+### Commit Reference
+- Commit: `e6d8e7c` — Corrected UptimeRobot pause payload to use integer flag after migration
