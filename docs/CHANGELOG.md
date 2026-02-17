@@ -3,6 +3,17 @@
 All notable changes to **Comfortable Home v2** are documented here.  
 This project follows a simple, milestone-based versioning style.
 
+## 2.5.2 — UptimeRobot Pause Hotfix (2026‑02‑15)
+
+### Fixed
+- Corrected UptimeRobot pause API payload after server migration.
+- Updated REST command to use proper integer flag (`status: 0`) instead of string.
+- Restored full pause/resume functionality for monitoring automation.
+
+### Notes
+This was a targeted **hotfix** applied outside the normal feature workflow to
+address a post‑migration regression. No other systems were affected.
+
 ## 2.5.1 — Seasonal Sunlight Engine + Dashboard Indicators (2026-01-31)
 
 ### Added
