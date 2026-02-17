@@ -1354,3 +1354,29 @@
                   value: '{{ cool - 6 }}'
                 action: input_number.set_value
   mode: queued
+- id: '1771170611179'
+  alias: Pause UptimeRobot Monitoring
+  description: Pauses UptimeRobot before the Monday patch window
+  triggers:
+  - at: 03:55:00
+    trigger: time
+  conditions:
+  - condition: time
+    weekday:
+    - mon
+  actions:
+  - action: rest_command.uptimerobot_pause
+  mode: single
+- id: '1771170653160'
+  alias: Resume UptimeRobot Monitoring
+  description: Resumes UptimeRobot after the Monday patch window
+  triggers:
+  - at: 05:30:00
+    trigger: time
+  conditions:
+  - condition: time
+    weekday:
+    - mon
+  actions:
+  - action: rest_command.uptimerobot_resume
+  mode: single

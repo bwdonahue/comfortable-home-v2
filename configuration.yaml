@@ -18,6 +18,7 @@ notify:
     api_key: !secret sendgrid_api_key
     sender: homeassistant@realdeep.net
     recipient: bryandonahue@gmail.com
+
 rest_command:
   sendgrid_html:
     url: "https://api.sendgrid.com/v3/mail/send"
@@ -37,3 +38,24 @@ rest_command:
           "value": {{ body | tojson }}
         }]
       }
+
+  uptimerobot_pause:
+    url: "https://api.uptimerobot.com/v2/editMonitor"
+    method: POST
+    headers:
+      Content-Type: "application/x-www-form-urlencoded"
+    payload: >
+      api_key={{ states('input_text.uptimerobot_api_key_holder') }}&id=802207036&status=0
+
+  uptimerobot_resume:
+    url: "https://api.uptimerobot.com/v2/editMonitor"
+    method: POST
+    headers:
+      Content-Type: "application/x-www-form-urlencoded"
+    payload: >
+      api_key={{ states('input_text.uptimerobot_api_key_holder') }}&id=802207036&status=1
+
+input_text:
+  uptimerobot_api_key_holder:
+    name: UptimeRobot API Key Holder
+    max: 100
