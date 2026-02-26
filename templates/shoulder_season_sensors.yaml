@@ -1,0 +1,107 @@
+# ============================================================
+# SHOULDER SEASON SENSORS
+# Spring + Fall
+# Baseline / Nudge / Boost / Mode / Color
+# ============================================================
+
+- sensor:
+    # --------------------------------------------------------
+    # CURRENT SHOULDER SEASON MODE (TEXT)
+    # --------------------------------------------------------
+    - name: shoulder_season_current_log
+      state: >
+        {% set boost = is_state('input_boolean.boost_mode', 'on') %}
+        {% set spring = is_state('input_boolean.spring_shoulder_active', 'on') %}
+        {% set fall = is_state('input_boolean.fall_shoulder_active', 'on') %}
+
+        {% if boost %}
+          BOOST ACTIVE — {{ now().strftime('%b %d, %Y %H:%M') }}
+
+        {% elif spring %}
+          {% set logs = [
+            states('input_text.spring_shoulder_warm_day_log'),
+            states('input_text.spring_shoulder_cool_day_log'),
+            states('input_text.spring_shoulder_baseline_log')
+          ] %}
+          {{ logs | select('string') | reject('equalto','') | list | sort | last }}
+
+        {% elif fall %}
+          {% set logs = [
+            states('input_text.fall_shoulder_warm_day_log'),
+            states('input_text.fall_shoulder_cool_day_log'),
+            states('input_text.fall_shoulder_baseline_log')
+          ] %}
+          {{ logs | select('string') | reject('equalto','') | list | sort | last }}
+
+        {% else %}
+          INACTIVE
+        {% endif %}
+
+    # --------------------------------------------------------
+    # CURRENT SHOULDER SEASON MODE (COLOR)
+    # --------------------------------------------------------
+    - name: shoulder_season_mode_color
+      state: >
+        {% set raw = states('sensor.shoulder_season_current_log') %}
+
+        {% if 'BOOST' in raw %}
+          purple
+        {% elif 'WARM-DAY COOLING' in raw %}
+          orange
+        {% elif 'COOL-DAY HEATING' in raw %}
+          blue
+        {% elif 'BASELINE' in raw %}
+          green
+        {% else %}
+          grey
+        {% endif %}
+
+    # --------------------------------------------------------
+    # LAST NUDGE (TEXT)
+    # --------------------------------------------------------
+    - name: shoulder_last_nudge_text
+      state: >
+        {% set logs = [
+          states('input_text.spring_shoulder_warm_day_log'),
+          states('input_text.spring_shoulder_cool_day_log'),
+          states('input_text.fall_shoulder_warm_day_log'),
+          states('input_text.fall_shoulder_cool_day_log')
+        ] %}
+
+        {% set valid = logs | select('string') | reject('equalto','') | list %}
+        {% if valid | count > 0 %}
+          {{ valid | sort | last }}
+        {% else %}
+          NONE
+        {% endif %}
+
+    # --------------------------------------------------------
+    # LAST NUDGE (COLOR)
+    # --------------------------------------------------------
+    - name: shoulder_last_nudge_color
+      state: >
+        {% set raw = states('sensor.shoulder_last_nudge_text') %}
+        {% if 'WARM-DAY COOLING' in raw %}
+          orange
+        {% elif 'COOL-DAY HEATING' in raw %}
+          blue
+        {% else %}
+          grey
+        {% endif %}
+
+    # --------------------------------------------------------
+    # LAST BASELINE (TEXT)
+    # --------------------------------------------------------
+    - name: shoulder_last_baseline_text
+      state: >
+        {% set logs = [
+          states('input_text.spring_shoulder_baseline_log'),
+          states('input_text.fall_shoulder_baseline_log')
+        ] %}
+
+        {% set valid = logs | select('string') | reject('equalto','') | list %}
+        {% if valid | count > 0 %}
+          {{ valid | sort | last }}
+        {% else %}
+          NONE
+        {% endif %}

@@ -324,55 +324,59 @@
   mode: single
 - id: '1766215066594'
   alias: Spring Shoulder Season Activation
-  description: Set thermostat to HEAT/COOL mode with 68–72°F band every April 1st
-    at 5 AM
+  description: Activate Spring Shoulder Season using baseline helpers every April
+    1st at 5 AM
   triggers:
-  - at: 05:00:00
-    trigger: time
+  - trigger: time
+    at: 05:00:00
   conditions:
   - condition: template
     value_template: '{{ now().month == 4 and now().day == 1 }}'
   actions:
-  - target:
+  - action: climate.set_hvac_mode
+    target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
-    action: climate.set_hvac_mode
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: 68
-      target_temp_high: 72
-    action: climate.set_temperature
-  - target:
+      target_temp_low: '{{ states(''input_number.spring_baseline_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.spring_baseline_cool_temp'') | int
+        }}'
+  - action: automation.trigger
+    target:
       entity_id: automation.send_spring_shoulder_email
-    action: automation.trigger
   mode: single
 - id: '1766215215363'
   alias: Fall Shoulder Season Activation
-  description: Set thermostat to HEAT/COOL mode with 68–72°F band every September
+  description: Activate Fall Shoulder Season using baseline helpers every September
     1st at 5 AM
   triggers:
-  - at: 05:00:00
-    trigger: time
+  - trigger: time
+    at: 05:00:00
   conditions:
   - condition: template
     value_template: '{{ now().month == 9 and now().day == 1 }}'
   actions:
-  - target:
+  - action: climate.set_hvac_mode
+    target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
-    action: climate.set_hvac_mode
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: 68
-      target_temp_high: 72
-    action: climate.set_temperature
-  - target:
+      target_temp_low: '{{ states(''input_number.fall_baseline_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.fall_baseline_cool_temp'') | int
+        }}'
+  - action: automation.trigger
+    target:
       entity_id: automation.send_fall_shoulder_email
-    action: automation.trigger
   mode: single
 - id: '1767155567195'
   alias: Summer Mode Activation
@@ -784,181 +788,244 @@
       entity_id: input_boolean.summer_cloudy_active
   mode: single
 - id: '1767162828170'
-  alias: Spring Temperature Baseline (10 AM – 8 PM)
-  description: Set Nest to HEAT/COOL mode with 68–74°F band during spring daytime
-    hours
+  alias: Spring Temperature Baseline (10 AM)
+  description: Apply Spring baseline temps using helpers during April and May
   triggers:
-  - at: '10:00:00'
-    trigger: time
+  - trigger: time
+    at: '10:00:00'
   conditions:
   - condition: template
-    value_template: '{{ now().month in [4, 5] }}
-
-      '
+    value_template: '{{ now().month in [4, 5] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
   actions:
-  - target:
+  - action: climate.set_hvac_mode
+    target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
-    action: climate.set_hvac_mode
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: 68
-      target_temp_high: 74
-    action: climate.set_temperature
+      target_temp_low: '{{ states(''input_number.spring_baseline_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.spring_baseline_cool_temp'') | int
+        }}'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.spring_shoulder_baseline_log
+    data:
+      value: 'BASELINE {{ states(''input_number.spring_baseline_heat_temp'') | int
+        }}–{{ states(''input_number.spring_baseline_cool_temp'') | int }}°F — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
+
+        '
   mode: single
 - id: '1767162914113'
-  alias: Fall Temperature Baseline (10 AM – 8 PM)
-  description: Set Nest to HEAT/COOL mode with 68–74°F band during fall daytime hours
+  alias: Fall Temperature Baseline (10 AM)
+  description: Apply Fall baseline temps using helpers during September and October
   triggers:
-  - at: '10:00:00'
-    trigger: time
+  - trigger: time
+    at: '10:00:00'
   conditions:
   - condition: template
-    value_template: '{{ now().month in [9, 10] }}
-
-      '
+    value_template: '{{ now().month in [9, 10] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
   actions:
-  - target:
+  - action: climate.set_hvac_mode
+    target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
-    action: climate.set_hvac_mode
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: 68
-      target_temp_high: 74
-    action: climate.set_temperature
+      target_temp_low: '{{ states(''input_number.fall_baseline_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.fall_baseline_cool_temp'') | int
+        }}'
+  - action: input_text.set_value
+    data:
+      value: 'BASELINE {{ states(''input_number.fall_baseline_heat_temp'') | int }}–{{
+        states(''input_number.fall_baseline_cool_temp'') | int }}°F — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
+
+        '
+    target:
+      entity_id: input_text.fall_baseline_log
   mode: single
 - id: '1767163393411'
   alias: Spring Cooling Nudge (Warm Shoulder Days)
-  description: Set Nest to HEAT/COOL 66–72°F when spring temps exceed 75°F
+  description: Apply Spring warm-day cooling temps using helpers when outdoor temp
+    exceeds threshold
   triggers:
-  - entity_id: sensor.st_00196977_temperature
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_temperature
     above: 75
-    trigger: numeric_state
   conditions:
   - condition: template
-    value_template: '{{ now().month in [4, 5] }}
-
-      '
-  - condition: time
-    after: '10:00:00'
-    before: '20:00:00'
+    value_template: '{{ now().month in [4, 5] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
   - condition: template
-    value_template: "{{ state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')
-      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')))
-      > 1800 }}\n"
+    value_template: "{{\n  state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')
+      is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')))
+      > 1800\n}}\n"
   actions:
-  - target:
+  - action: climate.set_hvac_mode
+    target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
-    action: climate.set_hvac_mode
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: 66
-      target_temp_high: 72
-    action: climate.set_temperature
+      target_temp_low: '{{ states(''input_number.spring_warm_day_cooling_heat_temp'')
+        | int }}'
+      target_temp_high: '{{ states(''input_number.spring_warm_day_cooling_cool_temp'')
+        | int }}'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.spring_shoulder_warm_day_log
+    data:
+      value: 'WARM-DAY COOLING {{ states(''input_number.spring_warm_day_cooling_heat_temp'')
+        | int }}–{{ states(''input_number.spring_warm_day_cooling_cool_temp'') | int
+        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
   mode: single
 - id: '1767163422105'
   alias: Fall Cooling Nudge (Warm Shoulder Days)
-  description: Set Nest to HEAT/COOL 66–72°F when fall temps exceed 75°F
+  description: Apply Fall warm-day cooling temps using helpers when outdoor temp exceeds
+    threshold
   triggers:
-  - entity_id: sensor.st_00196977_temperature
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_temperature
     above: 75
-    trigger: numeric_state
   conditions:
   - condition: template
-    value_template: '{{ now().month in [9, 10] }}
-
-      '
-  - condition: time
-    after: '10:00:00'
-    before: '20:00:00'
+    value_template: '{{ now().month in [9, 10] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
   - condition: template
-    value_template: "{{ state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')
-      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')))
-      > 1800 }}\n"
+    value_template: "{{\n  state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')
+      is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')))
+      > 1800\n}}\n"
   actions:
-  - target:
+  - action: climate.set_hvac_mode
+    target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
-    action: climate.set_hvac_mode
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: 66
-      target_temp_high: 72
-    action: climate.set_temperature
+      target_temp_low: '{{ states(''input_number.fall_warm_day_cooling_heat_temp'')
+        | int }}'
+      target_temp_high: '{{ states(''input_number.fall_warm_day_cooling_cool_temp'')
+        | int }}'
+  - action: input_text.set_value
+    data:
+      value: 'WARM-DAY COOLING {{ states(''input_number.fall_warm_day_cooling_heat_temp'')
+        | int }}–{{ states(''input_number.fall_warm_day_cooling_cool_temp'') | int
+        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
+    target:
+      entity_id: input_text.fall_warm_day_log
   mode: single
 - id: '1767163618085'
   alias: Spring Heating Nudge (Cool Shoulder Days)
-  description: Set Nest to HEAT/COOL 70–76°F when spring temps drop below 55°F
+  description: Apply Spring cool-day heating temps using helpers when outdoor temp
+    drops below threshold
   triggers:
-  - entity_id: sensor.st_00196977_temperature
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_temperature
     below: 55
-    trigger: numeric_state
   conditions:
   - condition: template
-    value_template: '{{ now().month in [4, 5] }}
-
-      '
-  - condition: time
-    after: '10:00:00'
-    before: '20:00:00'
+    value_template: '{{ now().month in [4, 5] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
   - condition: template
-    value_template: "{{ state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')
-      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')))
-      > 1800 }}\n"
+    value_template: "{{\n  state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')
+      is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')))
+      > 1800\n}}\n"
   actions:
-  - target:
+  - action: climate.set_hvac_mode
+    target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
-    action: climate.set_hvac_mode
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: 70
-      target_temp_high: 76
-    action: climate.set_temperature
+      target_temp_low: '{{ states(''input_number.spring_cool_day_heating_heat_temp'')
+        | int }}'
+      target_temp_high: '{{ states(''input_number.spring_cool_day_heating_cool_temp'')
+        | int }}'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.spring_shoulder_cool_day_log
+    data:
+      value: 'COOL-DAY HEATING {{ states(''input_number.spring_cool_day_heating_heat_temp'')
+        | int }}–{{ states(''input_number.spring_cool_day_heating_cool_temp'') | int
+        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
   mode: single
 - id: '1767163652747'
   alias: Fall Heating Nudge (Cool Shoulder Days)
-  description: Set Nest to HEAT/COOL 70–76°F when fall temps drop below 55°F
+  description: Apply Fall cool-day heating temps using helpers when outdoor temp drops
+    below threshold
   triggers:
-  - entity_id: sensor.st_00196977_temperature
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_temperature
     below: 55
-    trigger: numeric_state
   conditions:
   - condition: template
-    value_template: '{{ now().month in [9, 10] }}
-
-      '
-  - condition: time
-    after: '10:00:00'
-    before: '20:00:00'
+    value_template: '{{ now().month in [9, 10] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
   - condition: template
-    value_template: "{{ state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')
-      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')))
-      > 1800 }}\n"
+    value_template: "{{\n  state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')
+      is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')))
+      > 1800\n}}\n"
   actions:
-  - target:
+  - action: climate.set_hvac_mode
+    target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
-    action: climate.set_hvac_mode
-  - target:
+  - action: climate.set_temperature
+    target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: 70
-      target_temp_high: 76
-    action: climate.set_temperature
+      target_temp_low: '{{ states(''input_number.fall_cool_day_heating_heat_temp'')
+        | int }}'
+      target_temp_high: '{{ states(''input_number.fall_cool_day_heating_cool_temp'')
+        | int }}'
+  - action: input_text.set_value
+    data:
+      value: 'COOL-DAY HEATING {{ states(''input_number.fall_cool_day_heating_heat_temp'')
+        | int }}–{{ states(''input_number.fall_cool_day_heating_cool_temp'') | int
+        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
+    target:
+      entity_id: input_text.fall_cool_day_log
   mode: single
 - id: '1769406598805'
   alias: Temporary Comfort Reset Automation
@@ -1379,4 +1446,62 @@
     - mon
   actions:
   - action: rest_command.uptimerobot_resume
+  mode: single
+- id: '1771994049128'
+  alias: Spring Pre-Season Email (Reminder)
+  description: Sends Spring reminder email a few days before season activation
+  triggers:
+  - at: 09:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month == 3 and now().day == 29 }}'
+  actions:
+  - action: rest_command.sendgrid_html
+    data:
+      subject: Spring Shoulder Season Coming Soon
+      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
+        \   <p>\n      Spring shoulder season begins soon. Nest will switch into <b>AUTO
+        mode</b> on April 1.\n    </p>\n\n    <p>\n      This allows the system to
+        automatically decide whether to heat or cool as temperatures warm up.\n    </p>\n\n
+        \   <p><b>Spring shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover
+        AC unit in backyard</li>\n      <li>Adjust vents to neutral or balanced flow</li>\n
+        \     <li>Keep whole-house humidifier OFF</li>\n      <li>\n        Check
+        filter (<a href=\"https://www.secondnature.com/login\">FilterEasy login</a>)\n
+        \     </li>\n      <li>\n        Optional: schedule AC tune-up or duct cleaning<br>\n
+        \       &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
+        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        both heating and cooling are available as the weather transitions into warmer
+        months.\n    </p>\n\n  </body>\n</html>\n"
+  mode: single
+- id: '1771994259227'
+  alias: Fall Pre-Season Email (Reminder)
+  description: Sends Fall reminder email a few days before season activation
+  triggers:
+  - at: 09:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ now().month == 8 and now().day == 29 }}'
+  actions:
+  - action: rest_command.sendgrid_html
+    data:
+      subject: Fall Shoulder Season Coming Soon
+      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
+        \   <p>\n      Fall shoulder season begins soon. Nest will switch into <b>AUTO
+        mode</b> on September 1.\n    </p>\n\n    <p>\n      This allows the system
+        to automatically decide whether to heat or cool based on indoor conditions.\n
+        \   </p>\n\n    <p><b>Shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover
+        AC unit in backyard (system may cool on warm days)</li>\n      <li>Adjust
+        vents to neutral or balanced flow</li>\n      <li>Keep whole-house humidifier
+        OFF</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
+        login</a>)\n      </li>\n      <li>\n        Optional: schedule tune-up or
+        duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
+        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        both heating and cooling are available as the weather shifts.\n    </p>\n\n
+        \ </body>\n</html>\n"
   mode: single
