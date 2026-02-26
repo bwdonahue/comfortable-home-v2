@@ -3,6 +3,34 @@
 All notable changes to **Comfortable Home v2** are documented here.  
 This project follows a simple, milestone-based versioning style.
 
+## 2.5.3 — Shoulder Season Engine + Dashboard Tiles (2026-02-25)
+
+### Added
+- Full Spring/Fall Shoulder Season engine with mode detection:
+  - Baseline days
+  - Warm-day cooling
+  - Cool-day heating
+  - Boost-aware behavior
+- New template sensors:
+  - `sensor.shoulder_season_current_log`
+  - `sensor.shoulder_season_mode_color`
+  - `sensor.shoulder_last_nudge_text`
+  - `sensor.shoulder_last_nudge_color`
+  - `sensor.shoulder_last_baseline_text`
+- Three new dashboard tiles:
+  - Shoulder Season Mode
+  - Last Nudge
+  - Last Baseline
+
+### Improved
+- Unified handling of `NONE` / `unknown` states for nudges and baselines.
+- Grey “None” state before first events for cleaner idle UI.
+- Matched Winter tile layout, emoji style, and timestamp formatting for visual consistency.
+
+### Notes
+This release is the first full implementation of the Shoulder Season engine
+within Comfortable Home v2, extending Winter-style clarity into Spring and Fall.
+
 ## 2.5.2 — UptimeRobot Pause Hotfix (2026‑02‑15)
 
 ### Fixed
