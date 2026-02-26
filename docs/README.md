@@ -1,7 +1,7 @@
 # **Comfortable Home v2**
 
 A modular, state‑driven Home Assistant climate OS designed for comfort, stability, and seasonal automation.  
-Includes Boost Mode, countdown logic, activity logs, seasonal email notifications, and a structured approach to home rituals.
+Includes Boost Mode, countdown logic, activity logs, seasonal email notifications, Shoulder Season intelligence, and expressive dashboard tiles.
 
 ---
 
@@ -24,11 +24,18 @@ Includes Boost Mode, countdown logic, activity logs, seasonal email notification
 - Clean, modular logic documented in `/docs/boost_mode.md`
 
 ### **Climate State Machine**
-- Seasonal modes (Spring, Fall, Shoulder Season)  
+- Seasonal modes (Winter, Summer, Spring, Fall, Shoulder Season)  
 - Morning comfort routines  
 - Raise/Lower quick adjustments with cooldown protection  
 - Safety logic to prevent rapid cycling  
 - Fully documented in `/docs/season_schedule.md` and `/docs/temperature_schedules.md`
+
+### **Shoulder Season Engine (v2.5)**
+- Detects baseline days, warm‑day cooling, cool‑day heating, and Boost overrides  
+- Color‑coded mode reporting  
+- Nudge and baseline history with timestamped logs  
+- Dashboard tiles styled to match Winter’s emotional readability  
+- Unified NONE/unknown handling for clean idle states
 
 ### **Email Notifications**
 - Seasonal mode email alerts  
@@ -52,44 +59,44 @@ Includes Boost Mode, countdown logic, activity logs, seasonal email notification
 
 ## **📘 Version History**
 
-### **v2.0 Beta — Jan 2026**  
-IFTTT Automations + Dashboards
+### **2.5.3 — Shoulder Season Engine + Dashboard Tiles (2026‑02‑25)**
+First full implementation of the Spring/Fall Shoulder Season engine.  
+Adds mode detection, nudge/baseline logs, and Winter‑style dashboard tiles.
 
-### **v2.1 Beta — Jan 2026**  
-YAML Automations + UptimeRobot
+### **2.5.2 — UptimeRobot Pause Hotfix (2026‑02‑15)**
+Fixed REST payload regression after server migration.
 
-### **v2.2 — Feb 2026**  
-Logs + Temperature + Quick Buttons
+### **2.5.1 — Seasonal Sunlight Engine + Dashboard Indicators (2026‑01‑31)**
+Added sunlight detection, indicators, and dashboard tiles.
 
-### **v2.3 — Feb 2026**  
-Boost Mode + Countdown System
+### **2.5.0 — Seasonal Email Templates + SendGrid Delivery (2026‑01‑??)**
+Introduced HTML email templates and SendGrid delivery.
 
-### **v2.4 — Feb 2026**  
+### **2.4 — Feb 2026**  
 Stability + Cleanup + UI Migration
 
-*(v2.5 will be added when officially released — ongoing changes live in `docs/CHANGELOG.md`)*
+### **2.3 — Feb 2026**  
+Boost Mode + Countdown System
+
+### **2.2 — Feb 2026**  
+Logs + Temperature + Quick Buttons
+
+### **2.1 Beta — Jan 2026**  
+YAML Automations + UptimeRobot
+
+### **2.0 Beta — Jan 2026**  
+IFTTT Automations + Dashboards
 
 ---
 
 ## **📂 Repository Structure**
 
-```
 COMFORTABLE-HOME/
 │
-├── .gitignore
-├── .ha_run.lock
-├── .HA_VERSION
 ├── automations.yaml
 ├── configuration.yaml
-├── go2rtc-1.9.9
-├── go2rtc.yaml
-├── govee_learning.yaml
 ├── scenes.yaml
 ├── scripts.yaml
-│
-├── blueprints/
-│
-├── custom_components/
 │
 ├── docs/
 │   ├── boost_mode.md
@@ -100,20 +107,19 @@ COMFORTABLE-HOME/
 │   ├── temperature_schedules.md
 │   └── updating_email_templates.md
 │
-├── image/
-│
 ├── templates/
+│   ├── shoulder_season_sensors.yaml
+│   └── ...
 │
 └── www/
-    └── community/
-        └── lovelace-mushroom/
-            ├── mushroom.js
-            ├── mushroom.js.gz
-            └── email_templates/
-                ├── shoulder.html
-                ├── summer.html
-                └── winter.html
-```
+└── community/
+└── lovelace-mushroom/
+├── mushroom.js
+├── mushroom.js.gz
+└── email_templates/
+├── shoulder.html
+├── summer.html
+└── winter.html
 
 ---
 
@@ -143,4 +149,4 @@ This system is designed to be teachable, maintainable, and expandable — a clim
 ---
 
 ## **📄 License**
-
+MIT License
