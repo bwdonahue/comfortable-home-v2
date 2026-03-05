@@ -40,6 +40,14 @@ rest_command:
         }]
       }
 
+  log_to_notion:
+    url: "https://hook.us2.make.com/fdo8led4nxl2dgdciqugpdoconphsi2y"
+    method: POST
+    headers:
+      content-type: "application/json"
+    payload: >
+      {{ payload }}
+
   uptimerobot_pause:
     url: "https://api.uptimerobot.com/v2/editMonitor"
     method: POST
