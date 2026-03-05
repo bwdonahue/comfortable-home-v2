@@ -3,6 +3,17 @@
 All notable changes to **Comfortable Home v2** are documented here.  
 This project follows a simple, milestone-based versioning style.
 
+## v1.0 — Notion Logging + Seasonal Architecture Overhaul (2026-03-04)
+
+- Added unified seasonal activation automations (Spring, Summer, Fall, Winter)
+- Added input_select.current_season for season-aware logic
+- Added 19 Notion log automations across all seasons
+- Converted all logs to event-driven state_changed triggers
+- Removed all input_text rewrites to eliminate loops
+- Standardized JSON payloads for Notion ingestion
+- Added baseline, comfort, and weather-driven modes per season
+- Prepared system for AI-generated summaries and daily climate reports
+
 ## 2.5.3 — Shoulder Season Engine + Dashboard Tiles (2026-02-25)
 
 ### Added
