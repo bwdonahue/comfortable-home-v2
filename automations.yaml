@@ -1918,3 +1918,68 @@
         \ \"source\": \"HA\"\n}\n"
     action: rest_command.log_to_notion
   mode: single
+- id: '1772871730552'
+  alias: Temporary Boost Heat Log to Notion
+  description: Send Boost Heat log entry to Notion whenever the script writes to its
+    log
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_heat_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Temporary Boost Heat\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.temporary_boost_heat_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
+  mode: single
+- id: '1772872188373'
+  alias: Temporary Boost Reset Log to Notion
+  description: Send Reset log entry to Notion whenever the script writes to its log
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_reset_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Temporary Boost Reset\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.temporary_boost_reset_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
+  mode: single
+- id: '1772873262255'
+  alias: Temporary Boost Cool Log to Notion
+  description: Send Boost Cool log entry to Notion whenever the script writes to its
+    log
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_cool_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Temporary Boost Cool\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.temporary_boost_cool_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
+  mode: single

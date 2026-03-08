@@ -3,83 +3,95 @@ temporary_boost_heat:
   mode: single
   sequence:
   - variables:
-      now: '{{ as_timestamp(now()) }}'
+      now_ts: '{{ as_timestamp(now()) }}'
       last: '{{ states(''input_number.last_raise_press'') | float }}'
-      diff: '{{ now - last }}'
+      diff: '{{ now_ts - last }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_direction_lock
     state: 'off'
   - condition: template
     value_template: '{{ diff > 3600 }}'
-  - action: input_number.set_value
-    target:
+  - target:
       entity_id: input_number.last_raise_press
     data:
-      value: '{{ now }}'
-  - action: input_boolean.turn_on
-    target:
+      value: '{{ now_ts }}'
+    action: input_number.set_value
+  - target:
       entity_id: input_boolean.temporary_boost_active
+    action: input_boolean.turn_on
   - variables:
       current: '{{ state_attr(''climate.thermostat'', ''temperature'') | float }}'
       new: '{{ current + 2 }}'
-  - action: input_number.set_value
-    target:
+  - target:
       entity_id: input_number.temporary_comfort_original_temp
     data:
       value: '{{ current }}'
-  - action: climate.set_temperature
-    target:
+    action: input_number.set_value
+  - target:
       entity_id: climate.thermostat
     data:
       temperature: '{{ new }}'
-  - action: timer.start
-    target:
+    action: climate.set_temperature
+  - target:
       entity_id: timer.temporary_comfort_timer
     data:
       duration: 01:00:00
+    action: timer.start
   - target:
       entity_id: input_boolean.temporary_boost_direction_lock
     action: input_boolean.turn_on
+  - data:
+      value: Boost started (Heat) — {{ now().isoformat() }}
+    action: input_text.set_value
+    target:
+      entity_id: input_text.temporary_boost_heat_log
 temporary_lower_cool:
   alias: Temporary Boost Cool
   mode: single
   sequence:
   - variables:
-      now: '{{ as_timestamp(now()) }}'
+      now_ts: '{{ as_timestamp(now()) }}'
       last: '{{ states(''input_number.last_lower_press'') | float }}'
-      diff: '{{ now - last }}'
+      diff: '{{ now_ts - last }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_direction_lock
     state: 'off'
   - condition: template
     value_template: '{{ diff > 3600 }}'
-  - action: input_number.set_value
-    target:
+  - target:
       entity_id: input_number.last_lower_press
     data:
-      value: '{{ now }}'
-  - action: input_boolean.turn_on
-    target:
+      value: '{{ now_ts }}'
+    action: input_number.set_value
+  - target:
       entity_id: input_boolean.temporary_boost_active
+    action: input_boolean.turn_on
   - variables:
       current: '{{ state_attr(''climate.thermostat'', ''temperature'') | float }}'
       new: '{{ current - 2 }}'
-  - action: input_number.set_value
-    target:
+  - target:
       entity_id: input_number.temporary_comfort_original_temp
     data:
       value: '{{ current }}'
-  - action: climate.set_temperature
-    target:
+    action: input_number.set_value
+  - target:
       entity_id: climate.thermostat
     data:
       temperature: '{{ new }}'
-  - action: timer.start
-    target:
+    action: climate.set_temperature
+  - target:
       entity_id: timer.temporary_comfort_timer
+    data:
+      duration: 01:00:00
+    action: timer.start
   - target:
       entity_id: input_boolean.temporary_boost_direction_lock
     action: input_boolean.turn_on
+  - target:
+      entity_id: input_text.temporary_boost_cool_log
+    data:
+      value: Temporary Boost Cool — {{ now().isoformat() }}
+    action: input_text.set_value
 temporary_comfort_reset:
   alias: Temporary Comfort Reset
   mode: single
@@ -104,210 +116,6 @@ temporary_comfort_reset:
           temperature: '{{ states(''input_number.temporary_comfort_original_temp'')
             | float }}'
         action: climate.set_temperature
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_winter_morning_comfort
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.winter_morning_comfort_temp'') |
-            float }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.winter_morning_comfort_log
-        data:
-          value: 'HEAT {{ states(''input_number.winter_morning_comfort_temp'') }}°F
-            — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_winter_morning_comfort
-        action: input_boolean.turn_off
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_winter_weekday_daytime
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.winter_weekday_daytime_temp'') |
-            float }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.winter_weekday_daytime_log
-        data:
-          value: 'HEAT {{ states(''input_number.winter_weekday_daytime_temp'') }}°F
-            — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_winter_weekday_daytime
-        action: input_boolean.turn_off
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_winter_weekend_daytime
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.winter_weekend_daytime_temp'') |
-            float }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.winter_weekend_daytime_log
-        data:
-          value: 'HEAT {{ states(''input_number.winter_weekend_daytime_temp'') }}°F
-            — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_winter_weekend_daytime
-        action: input_boolean.turn_off
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_winter_evenings
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.winter_evening_temp'') | float }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.winter_evening_log
-        data:
-          value: 'HEAT {{ states(''input_number.winter_evening_temp'') }}°F — {{ now().strftime(''%b
-            %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_winter_evenings
-        action: input_boolean.turn_off
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_winter_overnight
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.winter_overnight_temp'') | float
-            }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.winter_overnight_log
-        data:
-          value: 'HEAT {{ states(''input_number.winter_overnight_temp'') }}°F — {{
-            now().strftime(''%b %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_winter_overnight
-        action: input_boolean.turn_off
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_summer_morning_comfort
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.summer_morning_comfort_temp'') |
-            float }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.summer_morning_comfort_log
-        data:
-          value: 'HEAT {{ states(''input_number.summer_morning_comfort_temp'') }}°F
-            — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_summer_morning_comfort
-        action: input_boolean.turn_off
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_summer_baseline
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.summer_baseline_temp'') | float }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.summer_baseline_log
-        data:
-          value: 'HEAT {{ states(''input_number.summer_baseline_temp'') }}°F — {{
-            now().strftime(''%b %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_summer_baseline
-        action: input_boolean.turn_off
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_summer_evening
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.summer_evening_temp'') | float }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.summer_evening_log
-        data:
-          value: 'HEAT {{ states(''input_number.summer_evening_temp'') }}°F — {{ now().strftime(''%b
-            %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_summer_evening
-        action: input_boolean.turn_off
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.skipped_summer_overnight
-        state: 'on'
-      sequence:
-      - target:
-          entity_id: climate.thermostat
-        data:
-          temperature: '{{ states(''input_number.summer_overnight_temp'') | float
-            }}'
-        action: climate.set_temperature
-      - target:
-          entity_id: input_text.summer_overnight_log
-        data:
-          value: 'HEAT {{ states(''input_number.summer_overnight_temp'') }}°F — {{
-            now().strftime(''%b %d, %Y %I:%M %p'') }}
-
-            '
-        action: input_text.set_value
-      - target:
-          entity_id: input_boolean.skipped_summer_overnight
-        action: input_boolean.turn_off
   - target:
       entity_id: timer.temporary_comfort_timer
     action: timer.cancel
@@ -334,3 +142,8 @@ temporary_comfort_reset:
     data:
       value: 0
     action: input_number.set_value
+  - target:
+      entity_id: input_text.temporary_boost_reset_log
+    data:
+      value: Temporary Boost Reset — {{ now().isoformat() }}
+    action: input_text.set_value
