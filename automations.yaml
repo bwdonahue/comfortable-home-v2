@@ -1,2090 +1,2390 @@
-- id: "1765594773184"
+- id: '1765594773184'
   alias: Comfort Log - Detect Nest setpoint change
   description: Log every Nest setpoint adjustment as a notification
   triggers:
-    - entity_id: climate.thermostat
-      attribute: temperature
-      trigger: state
+  - entity_id: climate.thermostat
+    attribute: temperature
+    trigger: state
   actions:
-    - data:
-        title: Comfort Log
-        message:
-          "{{ now().strftime('%Y-%m-%d %H:%M:%S') }} | Mode: {{ trigger.to_state.attributes.hvac_mode
-          | default('unknown') }} | Temp: {{ trigger.to_state.attributes.temperature
-          | default('n/a') }}°F | Source: Nest
+  - data:
+      title: Comfort Log
+      message: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }} | Mode: {{ trigger.to_state.attributes.hvac_mode
+        | default(''unknown'') }} | Temp: {{ trigger.to_state.attributes.temperature
+        | default(''n/a'') }}°F | Source: Nest
 
-          "
-      action: persistent_notification.create
+        '
+    action: persistent_notification.create
   mode: single
-- id: "1765606541050"
+- id: '1765606541050'
   alias: Winter Evening (5 - 11 PM)
   description: Set Nest to 70°F every evening in winter months
   triggers:
-    - at: "17:00:00"
-      trigger: time
+  - at: '17:00:00'
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [11, 12, 1, 2, 3] }}"
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_winter_evenings
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature: "{{ states('input_number.winter_evening_temp') | float }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.winter_evening_log
-              data:
-                value:
-                  "HEAT {{ states('input_number.winter_evening_temp') }}°F — {{ now().isoformat()
-                  }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_evenings
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_evening_temp'') | float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_evening_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_evening_temp'') }}°F — {{ now().isoformat()
+            }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: winter_evening
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_winter_evenings
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_evening
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_evenings
+        action: input_boolean.turn_off
   mode: single
-- id: "1765606930764"
+- id: '1765606930764'
   alias: Winter Morning Comfort (6 - 10 AM)
   description: Set Nest to the morning comfort temperature during winter months
   triggers:
-    - at: 06:00:00
-      trigger: time
+  - at: 06:00:00
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [11, 12, 1, 2, 3] }}"
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_winter_morning_comfort
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature:
-                  "{{ states('input_number.winter_morning_comfort_temp') |
-                  float }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.winter_morning_comfort_log
-              data:
-                value:
-                  "HEAT {{ states('input_number.winter_morning_comfort_temp') }}°F
-                  — {{ now().isoformat() }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_morning_comfort
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_morning_comfort_temp'') |
+            float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_morning_comfort_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_morning_comfort_temp'') }}°F
+            — {{ now().isoformat() }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: winter_morning_comfort
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_winter_morning_comfort
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_morning_comfort
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_morning_comfort
+        action: input_boolean.turn_off
   mode: single
-- id: "1765607045643"
+- id: '1765607045643'
   alias: Winter Overnight (11 PM - 6 AM)
   description: Set Nest to the overnight temperature during winter months
   triggers:
-    - at: "23:00:00"
-      trigger: time
+  - at: '23:00:00'
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [11, 12, 1, 2, 3] }}"
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_winter_overnight
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature:
-                  "{{ states('input_number.winter_overnight_temp') | float
-                  }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.winter_overnight_log
-              data:
-                value:
-                  "HEAT {{ states('input_number.winter_overnight_temp') }}°F — {{
-                  now().isoformat() }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_overnight
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_overnight_temp'') | float
+            }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_overnight_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_overnight_temp'') }}°F — {{
+            now().isoformat() }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: winter_overnight
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_winter_overnight
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_overnight
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_overnight
+        action: input_boolean.turn_off
   mode: single
-- id: "1766118393749"
+- id: '1766118393749'
   alias: Lights On When Dark (Tempest)
   description: Turn on Office lights at 100% brightness when Tempest reports low lux
   triggers:
-    - entity_id: sensor.st_00196977_illuminance
-      below: 1500
-      trigger: numeric_state
+  - entity_id: sensor.st_00196977_illuminance
+    below: 1500
+    trigger: numeric_state
   conditions:
-    - condition: sun
-      after: sunrise
-      before: sunset
+  - condition: sun
+    after: sunrise
+    before: sunset
   actions:
-    - action: light.turn_on
-      target:
-        entity_id:
-          - light.lamp1
-          - light.lamp2
-    - action: light.turn_on
-      target:
-        entity_id:
-          - light.lamp1
-          - light.lamp2
-      data:
-        brightness_pct: 100
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.lamp1
+      - light.lamp2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.lamp1
+      - light.lamp2
+    data:
+      brightness_pct: 100
   mode: restart
-- id: "1766118527127"
+- id: '1766118527127'
   alias: Lights Off When Bright (Tempest)
   description: Turn off Office lights when Tempest reports high lux
   triggers:
-    - entity_id: sensor.st_00196977_illuminance
-      above: 10000
-      trigger: numeric_state
+  - entity_id: sensor.st_00196977_illuminance
+    above: 10000
+    trigger: numeric_state
   conditions:
-    - condition: sun
-      after: sunrise
-      before: sunset
+  - condition: sun
+    after: sunrise
+    before: sunset
   actions:
-    - target:
-        entity_id:
-          - light.lamp1
-          - light.lamp2
-      action: light.turn_off
-      data: {}
+  - target:
+      entity_id:
+      - light.lamp1
+      - light.lamp2
+    action: light.turn_off
+    data: {}
   mode: restart
-- id: "1766214300212"
+- id: '1766214300212'
   alias: Winter Sunny Heating
   description: Boost heat to 70°F when winter sun is strong
   triggers:
-    - trigger: numeric_state
-      entity_id:
-        - sensor.st_00196977_irradiance
-      above: 250
-    - trigger: time_pattern
-      minutes: /5
+  - trigger: numeric_state
+    entity_id:
+    - sensor.st_00196977_irradiance
+    above: 250
+  - trigger: time_pattern
+    minutes: /5
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [11, 12, 1, 2, 3] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
-    - condition: time
-      after: "10:00:00"
-      before: "17:00:00"
-    - condition: numeric_state
-      entity_id: sensor.st_00196977_irradiance
-      above: 250
-    - condition: template
-      value_template:
-        "{{ state_attr('automation.winter_sunny_heating','last_triggered')
-        is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_sunny_heating','last_triggered')))
-        > 1800 }}\n"
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: time
+    after: '10:00:00'
+    before: '17:00:00'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_irradiance
+    above: 250
+  - condition: template
+    value_template: "{{ state_attr('automation.winter_sunny_heating','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_sunny_heating','last_triggered')))
+      > 1800 }}\n"
   actions:
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        temperature: 70
-    - action: input_text.set_value
-      target:
-        entity_id: input_text.winter_sunny_heating_log
-      data:
-        value: "HEAT 70°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 70
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.winter_sunny_heating_log
+    data:
+      value: 'HEAT 70°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
-          "
-    - action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.winter_sunny_active
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.winter_cloudy_active
-    - delay: 01:00:00
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.winter_sunny_active
+        '
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.winter_sunny_active
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.winter_cloudy_active
+  - delay: 01:00:00
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.winter_sunny_active
   mode: single
-- id: "1766214492841"
+- id: '1766214492841'
   alias: Winter Cloudy Heating
   description: Lower heat to 68°F when winter sun becomes weak
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.st_00196977_irradiance
-      below: 150
-    - trigger: time_pattern
-      minutes: /5
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_irradiance
+    below: 150
+  - trigger: time_pattern
+    minutes: /5
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [11, 12, 1, 2, 3] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
-    - condition: time
-      after: "10:00:00"
-      before: "17:00:00"
-    - condition: numeric_state
-      entity_id: sensor.st_00196977_irradiance
-      below: 150
-    - condition: template
-      value_template:
-        "{{ state_attr('automation.winter_cloudy_heating','last_triggered')
-        is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_cloudy_heating','last_triggered')))
-        > 1800 }}\n"
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: time
+    after: '10:00:00'
+    before: '17:00:00'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_irradiance
+    below: 150
+  - condition: template
+    value_template: "{{ state_attr('automation.winter_cloudy_heating','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_cloudy_heating','last_triggered')))
+      > 1800 }}\n"
   actions:
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        temperature: 68
-    - action: input_text.set_value
-      target:
-        entity_id: input_text.winter_cloudy_heating_log
-      data:
-        value: "HEAT 68°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 68
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.winter_cloudy_heating_log
+    data:
+      value: 'HEAT 68°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
-          "
-    - action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.winter_cloudy_active
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.winter_sunny_active
-    - delay: 01:00:00
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.winter_cloudy_active
+        '
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.winter_cloudy_active
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.winter_sunny_active
+  - delay: 01:00:00
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.winter_cloudy_active
   mode: single
-- id: "1766214814422"
+- id: '1766214814422'
   alias: Winter Mode Activation
-  description:
-    Set thermostat to Heat mode with your winter baseline every November
+  description: Set thermostat to Heat mode with your winter baseline every November
     1st at 5 AM
   triggers:
-    - at: 05:00:00
-      trigger: time
+  - at: 05:00:00
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month == 11 and now().day == 1 }}"
+  - condition: template
+    value_template: '{{ now().month == 11 and now().day == 1 }}'
   actions:
-    - target:
-        entity_id: input_select.current_season
-      data:
-        option: Winter
-      action: input_select.select_option
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        temperature: "{{ states('input_number.winter_baseline_temp') | float }}"
-    - action: automation.trigger
-      target:
-        entity_id: automation.send_winter_email
+  - target:
+      entity_id: input_select.current_season
+    data:
+      option: Winter
+    action: input_select.select_option
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      temperature: '{{ states(''input_number.winter_baseline_temp'') | float }}'
+  - action: automation.trigger
+    target:
+      entity_id: automation.send_winter_email
   mode: single
-- id: "1766215066594"
+- id: '1766215066594'
   alias: Spring Shoulder Season Activation
-  description:
-    Activate Spring Shoulder Season using baseline helpers every April
+  description: Activate Spring Shoulder Season using baseline helpers every April
     1st at 5 AM
   triggers:
-    - at: 05:00:00
-      trigger: time
+  - at: 05:00:00
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month == 4 and now().day == 1 }}"
+  - condition: template
+    value_template: '{{ now().month == 4 and now().day == 1 }}'
   actions:
-    - target:
-        entity_id: input_select.current_season
-      data:
-        option: Spring
-      action: input_select.select_option
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat_cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        target_temp_low:
-          "{{ states('input_number.spring_baseline_heat_temp') | int
-          }}"
-        target_temp_high:
-          "{{ states('input_number.spring_baseline_cool_temp') | int
-          }}"
-    - action: automation.trigger
-      target:
-        entity_id: automation.send_spring_shoulder_email
+  - target:
+      entity_id: input_select.current_season
+    data:
+      option: Spring
+    action: input_select.select_option
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: '{{ states(''input_number.spring_baseline_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.spring_baseline_cool_temp'') | int
+        }}'
+  - action: automation.trigger
+    target:
+      entity_id: automation.send_spring_shoulder_email
   mode: single
-- id: "1766215215363"
+- id: '1766215215363'
   alias: Fall Shoulder Season Activation
-  description:
-    Activate Fall Shoulder Season using baseline helpers every September
+  description: Activate Fall Shoulder Season using baseline helpers every September
     1st at 5 AM
   triggers:
-    - trigger: time
-      at: 05:00:00
+  - trigger: time
+    at: 05:00:00
   conditions:
-    - condition: template
-      value_template: "{{ now().month == 9 and now().day == 1 }}"
+  - condition: template
+    value_template: '{{ now().month == 9 and now().day == 1 }}'
   actions:
-    - target:
-        entity_id: input_select.current_season
-      data:
-        option: Fall
-      action: input_select.select_option
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat_cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        target_temp_low:
-          "{{ states('input_number.fall_baseline_heat_temp') | int
-          }}"
-        target_temp_high:
-          "{{ states('input_number.fall_baseline_cool_temp') | int
-          }}"
-    - action: automation.trigger
-      target:
-        entity_id: automation.send_fall_shoulder_email
-      data:
-        skip_condition: true
+  - target:
+      entity_id: input_select.current_season
+    data:
+      option: Fall
+    action: input_select.select_option
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: '{{ states(''input_number.fall_baseline_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.fall_baseline_cool_temp'') | int
+        }}'
+  - action: automation.trigger
+    target:
+      entity_id: automation.send_fall_shoulder_email
+    data:
+      skip_condition: true
   mode: single
-- id: "1767155567195"
+- id: '1767155567195'
   alias: Summer Mode Activation
-  description:
-    Set thermostat to COOL mode with your summer baseline every June 1st
+  description: Set thermostat to COOL mode with your summer baseline every June 1st
     at 5 AM
   triggers:
-    - at: 05:00:00
-      trigger: time
+  - at: 05:00:00
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month == 6 and now().day == 1 }}"
+  - condition: template
+    value_template: '{{ now().month == 6 and now().day == 1 }}'
   actions:
-    - target:
-        entity_id: input_select.current_season
-      data:
-        option: Summer
-      action: input_select.select_option
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        temperature: "{{ states('input_number.summer_baseline_temp') | float }}"
-    - action: automation.trigger
-      target:
-        entity_id: automation.send_summer_email
+  - target:
+      entity_id: input_select.current_season
+    data:
+      option: Summer
+    action: input_select.select_option
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      temperature: '{{ states(''input_number.summer_baseline_temp'') | float }}'
+  - action: automation.trigger
+    target:
+      entity_id: automation.send_summer_email
   mode: single
-- id: "1767160277785"
+- id: '1767160277785'
   alias: Winter Weekday Daytime (10 AM–5 PM)
   description: Set Nest to the weekday daytime temperature during winter months
   triggers:
-    - at: "10:00:00"
-      trigger: time
+  - at: '10:00:00'
+    trigger: time
   conditions:
-    - condition: template
-      value_template:
-        "{{ now().month in [11, 12, 1, 2, 3] and now().weekday() in [0,
-        1, 2, 3, 4] }}
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] and now().weekday() in [0,
+      1, 2, 3, 4] }}
 
-        "
+      '
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_winter_weekday_daytime
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature:
-                  "{{ states('input_number.winter_weekday_daytime_temp') |
-                  float }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.winter_weekday_daytime_log
-              data:
-                value:
-                  "HEAT {{ states('input_number.winter_weekday_daytime_temp') }}°F
-                  — {{ now().isoformat() }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_weekday_daytime
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_weekday_daytime_temp'') |
+            float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_weekday_daytime_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_weekday_daytime_temp'') }}°F
+            — {{ now().isoformat() }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: winter_weekday_daytime
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_winter_weekday_daytime
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_weekday_daytime
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_weekday_daytime
+        action: input_boolean.turn_off
   mode: single
-- id: "1767160448134"
+- id: '1767160448134'
   alias: Winter Weekend Daytime (10 AM–5 PM)
   description: Set Nest to the weekend daytime temperature during winter months
   triggers:
-    - at: "10:00:00"
-      trigger: time
+  - at: '10:00:00'
+    trigger: time
   conditions:
-    - condition: template
-      value_template:
-        "{{ now().month in [11, 12, 1, 2, 3] and now().weekday() in [5,
-        6] }}
+  - condition: template
+    value_template: '{{ now().month in [11, 12, 1, 2, 3] and now().weekday() in [5,
+      6] }}
 
-        "
+      '
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_winter_weekend_daytime
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature:
-                  "{{ states('input_number.winter_weekend_daytime_temp') |
-                  float }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.winter_weekend_daytime_log
-              data:
-                value:
-                  "HEAT {{ states('input_number.winter_weekend_daytime_temp') }}°F
-                  — {{ now().isoformat() }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_winter_weekend_daytime
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.winter_weekend_daytime_temp'') |
+            float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.winter_weekend_daytime_log
+        data:
+          value: 'HEAT {{ states(''input_number.winter_weekend_daytime_temp'') }}°F
+            — {{ now().isoformat() }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: winter_weekend_daytime
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_winter_weekend_daytime
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: winter_weekend_daytime
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_winter_weekend_daytime
+        action: input_boolean.turn_off
   mode: single
-- id: "1767161296523"
+- id: '1767161296523'
   alias: Summer Overnight (11 PM – 6 AM)
   description: Set Nest to the overnight temperature during summer months
   triggers:
-    - at: "23:00:00"
-      trigger: time
+  - at: '23:00:00'
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [6, 7, 8] }}"
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_summer_overnight
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature:
-                  "{{ states('input_number.summer_overnight_temp') | float
-                  }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.summer_overnight_log
-              data:
-                value:
-                  "COOL {{ states('input_number.summer_overnight_temp') }}°F — {{
-                  now().isoformat() }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_summer_overnight
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.summer_overnight_temp'') | float
+            }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.summer_overnight_log
+        data:
+          value: 'COOL {{ states(''input_number.summer_overnight_temp'') }}°F — {{
+            now().isoformat() }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: summer_overnight
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_summer_overnight
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: summer_overnight
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_summer_overnight
+        action: input_boolean.turn_off
   mode: single
-- id: "1767161429203"
+- id: '1767161429203'
   alias: Summer Evening (8 PM – 11 PM)
   description: Set Nest to the evening temperature during summer months
   triggers:
-    - at: "20:00:00"
-      trigger: time
+  - at: '20:00:00'
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [6, 7, 8] }}"
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_summer_evening
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature: "{{ states('input_number.summer_evening_temp') | float }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.summer_evening_log
-              data:
-                value:
-                  "COOL {{ states('input_number.summer_evening_temp') }}°F — {{ now().isoformat()
-                  }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_summer_evening
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.summer_evening_temp'') | float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.summer_evening_log
+        data:
+          value: 'COOL {{ states(''input_number.summer_evening_temp'') }}°F — {{ now().isoformat()
+            }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: summer_evening
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_summer_evening
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: summer_evening
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_summer_evening
+        action: input_boolean.turn_off
   mode: single
-- id: "1767161537152"
+- id: '1767161537152'
   alias: Summer Morning Comfort (6 AM – 10 AM)
   description: Set Nest to the morning comfort temperature during summer months
   triggers:
-    - at: 06:00:00
-      trigger: time
+  - at: 06:00:00
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [6, 7, 8] }}"
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_summer_morning_comfort
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature:
-                  "{{ states('input_number.summer_morning_comfort_temp') |
-                  float }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.summer_morning_comfort_log
-              data:
-                value:
-                  "COOL {{ states('input_number.summer_morning_comfort_temp') }}°F
-                  — {{ now().isoformat() }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_summer_morning_comfort
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.summer_morning_comfort_temp'') |
+            float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.summer_morning_comfort_log
+        data:
+          value: 'COOL {{ states(''input_number.summer_morning_comfort_temp'') }}°F
+            — {{ now().isoformat() }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: summer_morning_comfort
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_summer_morning_comfort
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: summer_morning_comfort
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_summer_morning_comfort
+        action: input_boolean.turn_off
   mode: single
-- id: "1767161626751"
+- id: '1767161626751'
   alias: Summer Baseline (10 AM – 8 PM)
   description: Set Nest to the daytime baseline temperature during summer months
   triggers:
-    - at: "10:00:00"
-      trigger: time
+  - at: '10:00:00'
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [6, 7, 8] }}"
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
   actions:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "on"
-          sequence:
-            - target:
-                entity_id: input_boolean.skipped_summer_baseline
-              action: input_boolean.turn_on
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.temporary_boost_active
-              state: "off"
-          sequence:
-            - target:
-                entity_id: climate.thermostat
-              data:
-                temperature: "{{ states('input_number.summer_baseline_temp') | float }}"
-              action: climate.set_temperature
-            - target:
-                entity_id: input_text.summer_baseline_log
-              data:
-                value:
-                  "COOL {{ states('input_number.summer_baseline_temp') }}°F — {{
-                  now().isoformat() }}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'on'
+      sequence:
+      - target:
+          entity_id: input_boolean.skipped_summer_baseline
+        action: input_boolean.turn_on
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.temporary_boost_active
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ states(''input_number.summer_baseline_temp'') | float }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_text.summer_baseline_log
+        data:
+          value: 'COOL {{ states(''input_number.summer_baseline_temp'') }}°F — {{
+            now().isoformat() }}
 
-                  "
-              action: input_text.set_value
-            - target:
-                entity_id: input_text.current_active_automation
-              data:
-                value: summer_baseline
-              action: input_text.set_value
-            - target:
-                entity_id: input_boolean.skipped_summer_baseline
-              action: input_boolean.turn_off
+            '
+        action: input_text.set_value
+      - target:
+          entity_id: input_text.current_active_automation
+        data:
+          value: summer_baseline
+        action: input_text.set_value
+      - target:
+          entity_id: input_boolean.skipped_summer_baseline
+        action: input_boolean.turn_off
   mode: single
-- id: "1767161805534"
+- id: '1767161805534'
   alias: Summer Sunny Cooling
   description: Cool to 72°F when summer sun is strong
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.st_00196977_illuminance
-      above: 350
-    - trigger: time_pattern
-      minutes: /5
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_illuminance
+    above: 350
+  - trigger: time_pattern
+    minutes: /5
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [6, 7, 8] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
-    - condition: time
-      after: "10:00:00"
-      before: "20:00:00"
-    - condition: numeric_state
-      entity_id: sensor.st_00196977_illuminance
-      above: 350
-    - condition: template
-      value_template:
-        "{{ state_attr('automation.summer_sunny_cooling','last_triggered')
-        is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_sunny_cooling','last_triggered')))
-        > 1800 }}\n"
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: time
+    after: '10:00:00'
+    before: '20:00:00'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_illuminance
+    above: 350
+  - condition: template
+    value_template: "{{ state_attr('automation.summer_sunny_cooling','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_sunny_cooling','last_triggered')))
+      > 1800 }}\n"
   actions:
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        temperature: 72
-    - action: input_text.set_value
-      target:
-        entity_id: input_text.summer_sunny_cooling_log
-      data:
-        value: "COOL 72°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 72
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.summer_sunny_cooling_log
+    data:
+      value: 'COOL 72°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
-          "
-    - action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.summer_sunny_active
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.summer_cloudy_active
-    - delay: 01:00:00
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.summer_sunny_active
+        '
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.summer_sunny_active
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.summer_cloudy_active
+  - delay: 01:00:00
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.summer_sunny_active
   mode: single
-- id: "1767161991146"
+- id: '1767161991146'
   alias: Summer Cloudy Cooling
   description: Cool to 74°F on cloudy summer days
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.st_00196977_illuminance
-      below: 200
-    - trigger: time_pattern
-      minutes: /5
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_illuminance
+    below: 200
+  - trigger: time_pattern
+    minutes: /5
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [6, 7, 8] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
-    - condition: time
-      after: "10:00:00"
-      before: "20:00:00"
-    - condition: numeric_state
-      entity_id: sensor.st_00196977_illuminance
-      below: 200
-    - condition: template
-      value_template:
-        "{{ state_attr('automation.summer_cloudy_cooling','last_triggered')
-        is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_cloudy_cooling','last_triggered')))
-        > 1800 }}\n"
+  - condition: template
+    value_template: '{{ now().month in [6, 7, 8] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: time
+    after: '10:00:00'
+    before: '20:00:00'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_illuminance
+    below: 200
+  - condition: template
+    value_template: "{{ state_attr('automation.summer_cloudy_cooling','last_triggered')
+      is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_cloudy_cooling','last_triggered')))
+      > 1800 }}\n"
   actions:
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        temperature: 74
-    - action: input_text.set_value
-      target:
-        entity_id: input_text.summer_cloudy_cooling_log
-      data:
-        value: "COOL 74°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 74
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.summer_cloudy_cooling_log
+    data:
+      value: 'COOL 74°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
-          "
-    - action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.summer_cloudy_active
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.summer_sunny_active
-    - delay: 01:00:00
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.summer_cloudy_active
+        '
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.summer_cloudy_active
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.summer_sunny_active
+  - delay: 01:00:00
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.summer_cloudy_active
   mode: single
-- id: "1767162828170"
+- id: '1767162828170'
   alias: Spring Temperature Baseline (10 AM)
   description: Apply Spring baseline temps using helpers during April and May
   triggers:
-    - trigger: time
-      at: "10:00:00"
+  - trigger: time
+    at: '10:00:00'
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [4, 5] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
+  - condition: template
+    value_template: '{{ now().month in [4, 5] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
   actions:
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat_cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        target_temp_low:
-          "{{ states('input_number.spring_baseline_heat_temp') | int
-          }}"
-        target_temp_high:
-          "{{ states('input_number.spring_baseline_cool_temp') | int
-          }}"
-    - action: input_text.set_value
-      target:
-        entity_id: input_text.spring_shoulder_baseline_log
-      data:
-        value:
-          "BASELINE {{ states('input_number.spring_baseline_heat_temp') | int
-          }}–{{ states('input_number.spring_baseline_cool_temp') | int }}°F — {{ now().strftime('%b
-          %d, %Y %I:%M %p') }}
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: '{{ states(''input_number.spring_baseline_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.spring_baseline_cool_temp'') | int
+        }}'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.spring_shoulder_baseline_log
+    data:
+      value: 'BASELINE {{ states(''input_number.spring_baseline_heat_temp'') | int
+        }}–{{ states(''input_number.spring_baseline_cool_temp'') | int }}°F — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
 
-          "
+        '
   mode: single
-- id: "1767162914113"
+- id: '1767162914113'
   alias: Fall Temperature Baseline (10 AM)
   description: Apply Fall baseline temps using helpers during September and October
   triggers:
-    - trigger: time
-      at: "10:00:00"
+  - trigger: time
+    at: '10:00:00'
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [9, 10] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
+  - condition: template
+    value_template: '{{ now().month in [9, 10] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
   actions:
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat_cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        target_temp_low:
-          "{{ states('input_number.fall_baseline_heat_temp') | int
-          }}"
-        target_temp_high:
-          "{{ states('input_number.fall_baseline_cool_temp') | int
-          }}"
-    - action: input_text.set_value
-      data:
-        value:
-          "BASELINE {{ states('input_number.fall_baseline_heat_temp') | int }}–{{
-          states('input_number.fall_baseline_cool_temp') | int }}°F — {{ now().strftime('%b
-          %d, %Y %I:%M %p') }}
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: '{{ states(''input_number.fall_baseline_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.fall_baseline_cool_temp'') | int
+        }}'
+  - action: input_text.set_value
+    data:
+      value: 'BASELINE {{ states(''input_number.fall_baseline_heat_temp'') | int }}–{{
+        states(''input_number.fall_baseline_cool_temp'') | int }}°F — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
 
-          "
-      target:
-        entity_id: input_text.fall_baseline_log
+        '
+    target:
+      entity_id: input_text.fall_baseline_log
   mode: single
-- id: "1767163393411"
+- id: '1767163393411'
   alias: Spring Cooling Nudge (Warm Shoulder Days)
-  description:
-    Apply Spring warm-day cooling temps using helpers when outdoor temp
+  description: Apply Spring warm-day cooling temps using helpers when outdoor temp
     exceeds threshold
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.st_00196977_temperature
-      above: 75
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    above: 75
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [4, 5] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
-    - condition: template
-      value_template:
-        "{{\n  state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')
-        is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')))
-        > 1800\n}}\n"
+  - condition: template
+    value_template: '{{ now().month in [4, 5] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: template
+    value_template: "{{\n  state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')
+      is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')))
+      > 1800\n}}\n"
   actions:
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat_cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        target_temp_low:
-          "{{ states('input_number.spring_warm_day_cooling_heat_temp')
-          | int }}"
-        target_temp_high:
-          "{{ states('input_number.spring_warm_day_cooling_cool_temp')
-          | int }}"
-    - action: input_text.set_value
-      target:
-        entity_id: input_text.spring_shoulder_warm_day_log
-      data:
-        value:
-          "WARM-DAY COOLING {{ states('input_number.spring_warm_day_cooling_heat_temp')
-          | int }}–{{ states('input_number.spring_warm_day_cooling_cool_temp') | int
-          }}°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: '{{ states(''input_number.spring_warm_day_cooling_heat_temp'')
+        | int }}'
+      target_temp_high: '{{ states(''input_number.spring_warm_day_cooling_cool_temp'')
+        | int }}'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.spring_shoulder_warm_day_log
+    data:
+      value: 'WARM-DAY COOLING {{ states(''input_number.spring_warm_day_cooling_heat_temp'')
+        | int }}–{{ states(''input_number.spring_warm_day_cooling_cool_temp'') | int
+        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
-          "
+        '
   mode: single
-- id: "1767163422105"
+- id: '1767163422105'
   alias: Fall Cooling Nudge (Warm Shoulder Days)
-  description:
-    Apply Fall warm-day cooling temps using helpers when outdoor temp exceeds
+  description: Apply Fall warm-day cooling temps using helpers when outdoor temp exceeds
     threshold
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.st_00196977_temperature
-      above: 75
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    above: 75
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [9, 10] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
-    - condition: template
-      value_template:
-        "{{\n  state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')
-        is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')))
-        > 1800\n}}\n"
+  - condition: template
+    value_template: '{{ now().month in [9, 10] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: template
+    value_template: "{{\n  state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')
+      is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')))
+      > 1800\n}}\n"
   actions:
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat_cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        target_temp_low:
-          "{{ states('input_number.fall_warm_day_cooling_heat_temp')
-          | int }}"
-        target_temp_high:
-          "{{ states('input_number.fall_warm_day_cooling_cool_temp')
-          | int }}"
-    - action: input_text.set_value
-      data:
-        value:
-          "WARM-DAY COOLING {{ states('input_number.fall_warm_day_cooling_heat_temp')
-          | int }}–{{ states('input_number.fall_warm_day_cooling_cool_temp') | int
-          }}°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: '{{ states(''input_number.fall_warm_day_cooling_heat_temp'')
+        | int }}'
+      target_temp_high: '{{ states(''input_number.fall_warm_day_cooling_cool_temp'')
+        | int }}'
+  - action: input_text.set_value
+    data:
+      value: 'WARM-DAY COOLING {{ states(''input_number.fall_warm_day_cooling_heat_temp'')
+        | int }}–{{ states(''input_number.fall_warm_day_cooling_cool_temp'') | int
+        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
-          "
-      target:
-        entity_id: input_text.fall_warm_day_log
+        '
+    target:
+      entity_id: input_text.fall_warm_day_log
   mode: single
-- id: "1767163618085"
+- id: '1767163618085'
   alias: Spring Heating Nudge (Cool Shoulder Days)
-  description:
-    Apply Spring cool-day heating temps using helpers when outdoor temp
+  description: Apply Spring cool-day heating temps using helpers when outdoor temp
     drops below threshold
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.st_00196977_temperature
-      below: 55
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    below: 55
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [4, 5] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
-    - condition: template
-      value_template:
-        "{{\n  state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')
-        is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')))
-        > 1800\n}}\n"
+  - condition: template
+    value_template: '{{ now().month in [4, 5] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: template
+    value_template: "{{\n  state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')
+      is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')))
+      > 1800\n}}\n"
   actions:
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat_cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        target_temp_low:
-          "{{ states('input_number.spring_cool_day_heating_heat_temp')
-          | int }}"
-        target_temp_high:
-          "{{ states('input_number.spring_cool_day_heating_cool_temp')
-          | int }}"
-    - action: input_text.set_value
-      target:
-        entity_id: input_text.spring_shoulder_cool_day_log
-      data:
-        value:
-          "COOL-DAY HEATING {{ states('input_number.spring_cool_day_heating_heat_temp')
-          | int }}–{{ states('input_number.spring_cool_day_heating_cool_temp') | int
-          }}°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: '{{ states(''input_number.spring_cool_day_heating_heat_temp'')
+        | int }}'
+      target_temp_high: '{{ states(''input_number.spring_cool_day_heating_cool_temp'')
+        | int }}'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.spring_shoulder_cool_day_log
+    data:
+      value: 'COOL-DAY HEATING {{ states(''input_number.spring_cool_day_heating_heat_temp'')
+        | int }}–{{ states(''input_number.spring_cool_day_heating_cool_temp'') | int
+        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
-          "
+        '
   mode: single
-- id: "1767163652747"
+- id: '1767163652747'
   alias: Fall Heating Nudge (Cool Shoulder Days)
-  description:
-    Apply Fall cool-day heating temps using helpers when outdoor temp drops
+  description: Apply Fall cool-day heating temps using helpers when outdoor temp drops
     below threshold
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.st_00196977_temperature
-      below: 55
+  - trigger: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    below: 55
   conditions:
-    - condition: template
-      value_template: "{{ now().month in [9, 10] }}"
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "off"
-    - condition: template
-      value_template:
-        "{{\n  state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')
-        is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')))
-        > 1800\n}}\n"
+  - condition: template
+    value_template: '{{ now().month in [9, 10] }}'
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'off'
+  - condition: template
+    value_template: "{{\n  state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')
+      is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')))
+      > 1800\n}}\n"
   actions:
-    - action: climate.set_hvac_mode
-      target:
-        entity_id: climate.thermostat
-      data:
-        hvac_mode: heat_cool
-    - action: climate.set_temperature
-      target:
-        entity_id: climate.thermostat
-      data:
-        target_temp_low:
-          "{{ states('input_number.fall_cool_day_heating_heat_temp')
-          | int }}"
-        target_temp_high:
-          "{{ states('input_number.fall_cool_day_heating_cool_temp')
-          | int }}"
-    - action: input_text.set_value
-      data:
-        value:
-          "COOL-DAY HEATING {{ states('input_number.fall_cool_day_heating_heat_temp')
-          | int }}–{{ states('input_number.fall_cool_day_heating_cool_temp') | int
-          }}°F — {{ now().strftime('%b %d, %Y %I:%M %p') }}
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: heat_cool
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.thermostat
+    data:
+      target_temp_low: '{{ states(''input_number.fall_cool_day_heating_heat_temp'')
+        | int }}'
+      target_temp_high: '{{ states(''input_number.fall_cool_day_heating_cool_temp'')
+        | int }}'
+  - action: input_text.set_value
+    data:
+      value: 'COOL-DAY HEATING {{ states(''input_number.fall_cool_day_heating_heat_temp'')
+        | int }}–{{ states(''input_number.fall_cool_day_heating_cool_temp'') | int
+        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
-          "
-      target:
-        entity_id: input_text.fall_cool_day_log
+        '
+    target:
+      entity_id: input_text.fall_cool_day_log
   mode: single
-- id: "1769406598805"
+- id: '1769406598805'
   alias: Temporary Comfort Reset Automation
   triggers:
-    - event_type: timer.finished
-      event_data:
-        entity_id: timer.temporary_comfort_timer
-      trigger: event
+  - event_type: timer.finished
+    event_data:
+      entity_id: timer.temporary_comfort_timer
+    trigger: event
   actions:
-    - action: script.temporary_comfort_reset
+  - action: script.temporary_comfort_reset
   mode: single
-- id: "1769669617835"
+- id: '1769669617835'
   alias: Update the countdown every second
-  description: ""
+  description: ''
   triggers:
-    - trigger: time_pattern
-      seconds: /1
+  - trigger: time_pattern
+    seconds: /1
   conditions:
-    - condition: state
-      entity_id: input_boolean.temporary_boost_active
-      state: "on"
+  - condition: state
+    entity_id: input_boolean.temporary_boost_active
+    state: 'on'
   actions:
-    - action: homeassistant.update_entity
-      data:
-        entity_id: sensor.boost_countdown
+  - action: homeassistant.update_entity
+    data:
+      entity_id: sensor.boost_countdown
   mode: single
-- id: "1769840194726"
+- id: '1769840194726'
   alias: Send Fall Shoulder Email
   description: Send Fall Shoulder HTML email
   triggers:
-    - entity_id: input_button.preview_fall_shoulder_email
-      trigger: state
+  - entity_id: input_button.preview_fall_shoulder_email
+    trigger: state
   actions:
-    - data:
-        subject: Fall Shoulder Season Activated
-        body:
-          "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-          20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-          \   <p>\n      Nest has switched into <b>AUTO mode</b> for the fall shoulder
-          season.\n    </p>\n\n    <p>\n      This allows the system to automatically
-          decide whether to heat or cool based on indoor conditions.\n    </p>\n\n    <p><b>Shoulder
-          season checklist:</b></p>\n\n    <ul>\n      <li>Uncover AC unit in backyard
-          (system may cool on warm days)</li>\n      <li>Adjust vents to neutral or
-          balanced flow</li>\n      <li>Keep whole-house humidifier OFF</li>\n      <li>\n
-          \       Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
-          login</a>)\n      </li>\n      <li>\n        Optional: schedule tune-up or
-          duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
-          Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-          Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
-          both heating and cooling are available as the weather shifts.\n    </p>\n\n
-          \ </body>\n</html>\n"
-      action: rest_command.sendgrid_html
+  - data:
+      subject: Fall Shoulder Season Activated
+      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
+        \   <p>\n      Nest has switched into <b>AUTO mode</b> for the fall shoulder
+        season.\n    </p>\n\n    <p>\n      This allows the system to automatically
+        decide whether to heat or cool based on indoor conditions.\n    </p>\n\n    <p><b>Shoulder
+        season checklist:</b></p>\n\n    <ul>\n      <li>Uncover AC unit in backyard
+        (system may cool on warm days)</li>\n      <li>Adjust vents to neutral or
+        balanced flow</li>\n      <li>Keep whole-house humidifier OFF</li>\n      <li>\n
+        \       Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
+        login</a>)\n      </li>\n      <li>\n        Optional: schedule tune-up or
+        duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
+        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        both heating and cooling are available as the weather shifts.\n    </p>\n\n
+        \ </body>\n</html>\n"
+    action: rest_command.sendgrid_html
   mode: single
-- id: "1769841042882"
+- id: '1769841042882'
   alias: Send Spring Shoulder Email
   description: Send Spring Shoulder HTML email
   triggers:
-    - entity_id: input_button.preview_spring_shoulder_email
-      trigger: state
+  - entity_id: input_button.preview_spring_shoulder_email
+    trigger: state
   actions:
-    - data:
-        subject: Spring Shoulder Season Activated
-        body:
-          "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-          20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-          \   <p>\n      Nest has switched into <b>AUTO mode</b> for the spring shoulder
-          season.\n    </p>\n\n    <p>\n      This allows the system to automatically
-          decide whether to heat or cool as temperatures warm up.\n    </p>\n\n    <p><b>Spring
-          shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover AC unit
-          in backyard</li>\n      <li>Adjust vents to neutral or balanced flow</li>\n
-          \     <li>Keep whole-house humidifier OFF</li>\n      <li>\n        Check
-          filter (<a href=\"https://www.secondnature.com/login\">FilterEasy login</a>)\n
-          \     </li>\n      <li>\n        Optional: schedule AC tune-up or duct cleaning<br>\n
-          \       &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
-          Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-          Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
-          both heating and cooling are available as the weather transitions into warmer
-          months.\n    </p>\n\n  </body>\n</html>\n"
-      action: rest_command.sendgrid_html
+  - data:
+      subject: Spring Shoulder Season Activated
+      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
+        \   <p>\n      Nest has switched into <b>AUTO mode</b> for the spring shoulder
+        season.\n    </p>\n\n    <p>\n      This allows the system to automatically
+        decide whether to heat or cool as temperatures warm up.\n    </p>\n\n    <p><b>Spring
+        shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover AC unit
+        in backyard</li>\n      <li>Adjust vents to neutral or balanced flow</li>\n
+        \     <li>Keep whole-house humidifier OFF</li>\n      <li>\n        Check
+        filter (<a href=\"https://www.secondnature.com/login\">FilterEasy login</a>)\n
+        \     </li>\n      <li>\n        Optional: schedule AC tune-up or duct cleaning<br>\n
+        \       &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
+        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        both heating and cooling are available as the weather transitions into warmer
+        months.\n    </p>\n\n  </body>\n</html>\n"
+    action: rest_command.sendgrid_html
   mode: single
-- id: "1769841892716"
+- id: '1769841892716'
   alias: Send Summer Email
   description: Send Summer Mode HTML email
   triggers:
-    - entity_id: input_button.preview_summer_email
-      trigger: state
+  - entity_id: input_button.preview_summer_email
+    trigger: state
   actions:
-    - data:
-        subject: Summer Mode Activated
-        body:
-          "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-          20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-          \   <p>\n      Nest is now in <b>COOL mode</b>.\n    </p>\n\n    <p>\n      The
-          system will only run the AC when temperatures rise above your set points.\n
-          \   </p>\n\n    <p><b>Summer prep checklist:</b></p>\n\n    <ul>\n      <li>Uncover
-          AC unit in backyard</li>\n      <li>Adjust vents for summer flow</li>\n      <li>Turn
-          OFF whole-house humidifier</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
-          login</a>)\n      </li>\n      <li>\n        Consider AC tune-up<br>\n        &nbsp;&nbsp;•
-          <a href=\"https://www.perfecthomeservices.com/hvac/air-conditioner/maintenance/\">Book
-          Perfect Home Services</a>\n      </li>\n      <li>\n        Optional: duct
-          cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-          Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
-          the home is ready for warm weather and solar‑aware cooling routines.\n    </p>\n\n
-          \ </body>\n</html>\n"
-      action: rest_command.sendgrid_html
+  - data:
+      subject: Summer Mode Activated
+      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
+        \   <p>\n      Nest is now in <b>COOL mode</b>.\n    </p>\n\n    <p>\n      The
+        system will only run the AC when temperatures rise above your set points.\n
+        \   </p>\n\n    <p><b>Summer prep checklist:</b></p>\n\n    <ul>\n      <li>Uncover
+        AC unit in backyard</li>\n      <li>Adjust vents for summer flow</li>\n      <li>Turn
+        OFF whole-house humidifier</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
+        login</a>)\n      </li>\n      <li>\n        Consider AC tune-up<br>\n        &nbsp;&nbsp;•
+        <a href=\"https://www.perfecthomeservices.com/hvac/air-conditioner/maintenance/\">Book
+        Perfect Home Services</a>\n      </li>\n      <li>\n        Optional: duct
+        cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        the home is ready for warm weather and solar‑aware cooling routines.\n    </p>\n\n
+        \ </body>\n</html>\n"
+    action: rest_command.sendgrid_html
   mode: single
-- id: "1769842193327"
+- id: '1769842193327'
   alias: Send Winter Email
   description: Send Winter Mode HTML email
   triggers:
-    - entity_id: input_button.preview_winter_email
-      trigger: state
+  - entity_id: input_button.preview_winter_email
+    trigger: state
   actions:
-    - data:
-        subject: Winter Mode Activated
-        body:
-          "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-          20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-          \   <p>\n      Nest is now in <b>HEAT mode</b>.\n    </p>\n\n    <p>\n      The
-          system will only run the furnace when temperatures drop below your set points.\n
-          \   </p>\n\n    <p><b>Winter prep checklist:</b></p>\n\n    <ul>\n      <li>Cover
-          AC unit in backyard</li>\n      <li>Adjust vents for winter flow</li>\n      <li>Turn
-          ON whole-house humidifier</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
-          login</a>)\n      </li>\n      <li>\n        Consider furnace tune-up<br>\n
-          \       &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/hvac/\">Book
-          Perfect Home Services</a>\n      </li>\n      <li>\n        Optional: duct
-          cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-          Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
-          the home is ready for cold weather and solar‑aware heating routines.\n    </p>\n\n
-          \ </body>\n</html>\n"
-      action: rest_command.sendgrid_html
+  - data:
+      subject: Winter Mode Activated
+      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
+        \   <p>\n      Nest is now in <b>HEAT mode</b>.\n    </p>\n\n    <p>\n      The
+        system will only run the furnace when temperatures drop below your set points.\n
+        \   </p>\n\n    <p><b>Winter prep checklist:</b></p>\n\n    <ul>\n      <li>Cover
+        AC unit in backyard</li>\n      <li>Adjust vents for winter flow</li>\n      <li>Turn
+        ON whole-house humidifier</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
+        login</a>)\n      </li>\n      <li>\n        Consider furnace tune-up<br>\n
+        \       &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/hvac/\">Book
+        Perfect Home Services</a>\n      </li>\n      <li>\n        Optional: duct
+        cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        the home is ready for cold weather and solar‑aware heating routines.\n    </p>\n\n
+        \ </body>\n</html>\n"
+    action: rest_command.sendgrid_html
   mode: single
-- id: "1770260562783"
+- id: '1770260562783'
   alias: Spring + Fall 6 Degree Safety Gap Enforcement
   triggers:
-    - entity_id:
-        - input_number.spring_baseline_heat_temp
-        - input_number.spring_baseline_cool_temp
-        - input_number.spring_warm_day_heat_temp
-        - input_number.spring_warm_day_cool_temp
-        - input_number.spring_cool_day_heat_temp
-        - input_number.spring_cool_day_cool_temp
-        - input_number.fall_baseline_heat_temp
-        - input_number.fall_baseline_cool_temp
-        - input_number.fall_warm_day_heat_temp
-        - input_number.fall_warm_day_cool_temp
-        - input_number.fall_cool_day_heat_temp
-        - input_number.fall_cool_day_cool_temp
-      trigger: state
+  - entity_id:
+    - input_number.spring_baseline_heat_temp
+    - input_number.spring_baseline_cool_temp
+    - input_number.spring_warm_day_heat_temp
+    - input_number.spring_warm_day_cool_temp
+    - input_number.spring_cool_day_heat_temp
+    - input_number.spring_cool_day_cool_temp
+    - input_number.fall_baseline_heat_temp
+    - input_number.fall_baseline_cool_temp
+    - input_number.fall_warm_day_heat_temp
+    - input_number.fall_warm_day_cool_temp
+    - input_number.fall_cool_day_heat_temp
+    - input_number.fall_cool_day_cool_temp
+    trigger: state
   actions:
-    - variables:
-        changed: "{{ trigger.entity_id }}"
-    - choose:
+  - variables:
+      changed: '{{ trigger.entity_id }}'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ changed in [ ''input_number.spring_baseline_heat_temp'',
+          ''input_number.spring_baseline_cool_temp'' ] }}'
+      sequence:
+      - variables:
+          heat: '{{ states(''input_number.spring_baseline_heat_temp'') | int }}'
+          cool: '{{ states(''input_number.spring_baseline_cool_temp'') | int }}'
+      - choose:
         - conditions:
-            - condition: template
-              value_template:
-                "{{ changed in [ 'input_number.spring_baseline_heat_temp',
-                'input_number.spring_baseline_cool_temp' ] }}"
+          - condition: template
+            value_template: '{{ changed == ''input_number.spring_baseline_heat_temp''
+              }}'
           sequence:
-            - variables:
-                heat: "{{ states('input_number.spring_baseline_heat_temp') | int }}"
-                cool: "{{ states('input_number.spring_baseline_cool_temp') | int }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.spring_baseline_heat_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ cool != heat + 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.spring_baseline_cool_temp
-                              data:
-                                value: "{{ heat + 6 }}"
-                              action: input_number.set_value
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.spring_baseline_cool_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ heat != cool - 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.spring_baseline_heat_temp
-                              data:
-                                value: "{{ cool - 6 }}"
-                              action: input_number.set_value
-    - choose:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ cool != heat + 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.spring_baseline_cool_temp
+                data:
+                  value: '{{ heat + 6 }}'
+                action: input_number.set_value
+      - choose:
         - conditions:
-            - condition: template
-              value_template:
-                "{{ changed in [ 'input_number.spring_warm_day_heat_temp',
-                'input_number.spring_warm_day_cool_temp' ] }}"
+          - condition: template
+            value_template: '{{ changed == ''input_number.spring_baseline_cool_temp''
+              }}'
           sequence:
-            - variables:
-                heat: "{{ states('input_number.spring_warm_day_heat_temp') | int }}"
-                cool: "{{ states('input_number.spring_warm_day_cool_temp') | int }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.spring_warm_day_heat_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ cool != heat + 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.spring_warm_day_cool_temp
-                              data:
-                                value: "{{ heat + 6 }}"
-                              action: input_number.set_value
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.spring_warm_day_cool_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ heat != cool - 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.spring_warm_day_heat_temp
-                              data:
-                                value: "{{ cool - 6 }}"
-                              action: input_number.set_value
-    - choose:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ heat != cool - 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.spring_baseline_heat_temp
+                data:
+                  value: '{{ cool - 6 }}'
+                action: input_number.set_value
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ changed in [ ''input_number.spring_warm_day_heat_temp'',
+          ''input_number.spring_warm_day_cool_temp'' ] }}'
+      sequence:
+      - variables:
+          heat: '{{ states(''input_number.spring_warm_day_heat_temp'') | int }}'
+          cool: '{{ states(''input_number.spring_warm_day_cool_temp'') | int }}'
+      - choose:
         - conditions:
-            - condition: template
-              value_template:
-                "{{ changed in [ 'input_number.spring_cool_day_heat_temp',
-                'input_number.spring_cool_day_cool_temp' ] }}"
+          - condition: template
+            value_template: '{{ changed == ''input_number.spring_warm_day_heat_temp''
+              }}'
           sequence:
-            - variables:
-                heat: "{{ states('input_number.spring_cool_day_heat_temp') | int }}"
-                cool: "{{ states('input_number.spring_cool_day_cool_temp') | int }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.spring_cool_day_heat_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ cool != heat + 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.spring_cool_day_cool_temp
-                              data:
-                                value: "{{ heat + 6 }}"
-                              action: input_number.set_value
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.spring_cool_day_cool_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ heat != cool - 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.spring_cool_day_heat_temp
-                              data:
-                                value: "{{ cool - 6 }}"
-                              action: input_number.set_value
-    - choose:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ cool != heat + 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.spring_warm_day_cool_temp
+                data:
+                  value: '{{ heat + 6 }}'
+                action: input_number.set_value
+      - choose:
         - conditions:
-            - condition: template
-              value_template:
-                "{{ changed in [ 'input_number.fall_baseline_heat_temp',
-                'input_number.fall_baseline_cool_temp' ] }}"
+          - condition: template
+            value_template: '{{ changed == ''input_number.spring_warm_day_cool_temp''
+              }}'
           sequence:
-            - variables:
-                heat: "{{ states('input_number.fall_baseline_heat_temp') | int }}"
-                cool: "{{ states('input_number.fall_baseline_cool_temp') | int }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.fall_baseline_heat_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ cool != heat + 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.fall_baseline_cool_temp
-                              data:
-                                value: "{{ heat + 6 }}"
-                              action: input_number.set_value
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.fall_baseline_cool_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ heat != cool - 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.fall_baseline_heat_temp
-                              data:
-                                value: "{{ cool - 6 }}"
-                              action: input_number.set_value
-    - choose:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ heat != cool - 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.spring_warm_day_heat_temp
+                data:
+                  value: '{{ cool - 6 }}'
+                action: input_number.set_value
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ changed in [ ''input_number.spring_cool_day_heat_temp'',
+          ''input_number.spring_cool_day_cool_temp'' ] }}'
+      sequence:
+      - variables:
+          heat: '{{ states(''input_number.spring_cool_day_heat_temp'') | int }}'
+          cool: '{{ states(''input_number.spring_cool_day_cool_temp'') | int }}'
+      - choose:
         - conditions:
-            - condition: template
-              value_template:
-                "{{ changed in [ 'input_number.fall_warm_day_heat_temp',
-                'input_number.fall_warm_day_cool_temp' ] }}"
+          - condition: template
+            value_template: '{{ changed == ''input_number.spring_cool_day_heat_temp''
+              }}'
           sequence:
-            - variables:
-                heat: "{{ states('input_number.fall_warm_day_heat_temp') | int }}"
-                cool: "{{ states('input_number.fall_warm_day_cool_temp') | int }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.fall_warm_day_heat_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ cool != heat + 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.fall_warm_day_cool_temp
-                              data:
-                                value: "{{ heat + 6 }}"
-                              action: input_number.set_value
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.fall_warm_day_cool_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ heat != cool - 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.fall_warm_day_heat_temp
-                              data:
-                                value: "{{ cool - 6 }}"
-                              action: input_number.set_value
-    - choose:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ cool != heat + 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.spring_cool_day_cool_temp
+                data:
+                  value: '{{ heat + 6 }}'
+                action: input_number.set_value
+      - choose:
         - conditions:
-            - condition: template
-              value_template:
-                "{{ changed in [ 'input_number.fall_cool_day_heat_temp',
-                'input_number.fall_cool_day_cool_temp' ] }}"
+          - condition: template
+            value_template: '{{ changed == ''input_number.spring_cool_day_cool_temp''
+              }}'
           sequence:
-            - variables:
-                heat: "{{ states('input_number.fall_cool_day_heat_temp') | int }}"
-                cool: "{{ states('input_number.fall_cool_day_cool_temp') | int }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.fall_cool_day_heat_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ cool != heat + 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.fall_cool_day_cool_temp
-                              data:
-                                value: "{{ heat + 6 }}"
-                              action: input_number.set_value
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template:
-                        "{{ changed == 'input_number.fall_cool_day_cool_temp'
-                        }}"
-                  sequence:
-                    - choose:
-                        - conditions:
-                            - condition: template
-                              value_template: "{{ heat != cool - 6 }}"
-                          sequence:
-                            - target:
-                                entity_id: input_number.fall_cool_day_heat_temp
-                              data:
-                                value: "{{ cool - 6 }}"
-                              action: input_number.set_value
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ heat != cool - 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.spring_cool_day_heat_temp
+                data:
+                  value: '{{ cool - 6 }}'
+                action: input_number.set_value
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ changed in [ ''input_number.fall_baseline_heat_temp'',
+          ''input_number.fall_baseline_cool_temp'' ] }}'
+      sequence:
+      - variables:
+          heat: '{{ states(''input_number.fall_baseline_heat_temp'') | int }}'
+          cool: '{{ states(''input_number.fall_baseline_cool_temp'') | int }}'
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ changed == ''input_number.fall_baseline_heat_temp''
+              }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ cool != heat + 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.fall_baseline_cool_temp
+                data:
+                  value: '{{ heat + 6 }}'
+                action: input_number.set_value
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ changed == ''input_number.fall_baseline_cool_temp''
+              }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ heat != cool - 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.fall_baseline_heat_temp
+                data:
+                  value: '{{ cool - 6 }}'
+                action: input_number.set_value
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ changed in [ ''input_number.fall_warm_day_heat_temp'',
+          ''input_number.fall_warm_day_cool_temp'' ] }}'
+      sequence:
+      - variables:
+          heat: '{{ states(''input_number.fall_warm_day_heat_temp'') | int }}'
+          cool: '{{ states(''input_number.fall_warm_day_cool_temp'') | int }}'
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ changed == ''input_number.fall_warm_day_heat_temp''
+              }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ cool != heat + 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.fall_warm_day_cool_temp
+                data:
+                  value: '{{ heat + 6 }}'
+                action: input_number.set_value
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ changed == ''input_number.fall_warm_day_cool_temp''
+              }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ heat != cool - 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.fall_warm_day_heat_temp
+                data:
+                  value: '{{ cool - 6 }}'
+                action: input_number.set_value
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ changed in [ ''input_number.fall_cool_day_heat_temp'',
+          ''input_number.fall_cool_day_cool_temp'' ] }}'
+      sequence:
+      - variables:
+          heat: '{{ states(''input_number.fall_cool_day_heat_temp'') | int }}'
+          cool: '{{ states(''input_number.fall_cool_day_cool_temp'') | int }}'
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ changed == ''input_number.fall_cool_day_heat_temp''
+              }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ cool != heat + 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.fall_cool_day_cool_temp
+                data:
+                  value: '{{ heat + 6 }}'
+                action: input_number.set_value
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ changed == ''input_number.fall_cool_day_cool_temp''
+              }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ heat != cool - 6 }}'
+              sequence:
+              - target:
+                  entity_id: input_number.fall_cool_day_heat_temp
+                data:
+                  value: '{{ cool - 6 }}'
+                action: input_number.set_value
   mode: queued
-- id: "1771170611179"
+- id: '1771170611179'
   alias: Pause UptimeRobot Monitoring
   description: Pauses UptimeRobot before the Monday patch window
   triggers:
-    - at: 03:55:00
-      trigger: time
+  - at: 03:55:00
+    trigger: time
   conditions:
-    - condition: time
-      weekday:
-        - mon
+  - condition: time
+    weekday:
+    - mon
   actions:
-    - action: rest_command.uptimerobot_pause
+  - action: rest_command.uptimerobot_pause
   mode: single
-- id: "1771170653160"
+- id: '1771170653160'
   alias: Resume UptimeRobot Monitoring
   description: Resumes UptimeRobot after the Monday patch window
   triggers:
-    - at: 05:30:00
-      trigger: time
+  - at: 05:30:00
+    trigger: time
   conditions:
-    - condition: time
-      weekday:
-        - mon
+  - condition: time
+    weekday:
+    - mon
   actions:
-    - action: rest_command.uptimerobot_resume
+  - action: rest_command.uptimerobot_resume
   mode: single
-- id: "1771994049128"
+- id: '1771994049128'
   alias: Spring Pre-Season Email (Reminder)
   description: Sends Spring reminder email a few days before season activation
   triggers:
-    - at: 09:00:00
-      trigger: time
+  - at: 09:00:00
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month == 3 and now().day == 29 }}"
+  - condition: template
+    value_template: '{{ now().month == 3 and now().day == 29 }}'
   actions:
-    - action: rest_command.sendgrid_html
-      data:
-        subject: Spring Shoulder Season Coming Soon
-        body:
-          "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-          20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-          \   <p>\n      Spring shoulder season begins soon. Nest will switch into <b>AUTO
-          mode</b> on April 1.\n    </p>\n\n    <p>\n      This allows the system to
-          automatically decide whether to heat or cool as temperatures warm up.\n    </p>\n\n
-          \   <p><b>Spring shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover
-          AC unit in backyard</li>\n      <li>Adjust vents to neutral or balanced flow</li>\n
-          \     <li>Keep whole-house humidifier OFF</li>\n      <li>\n        Check
-          filter (<a href=\"https://www.secondnature.com/login\">FilterEasy login</a>)\n
-          \     </li>\n      <li>\n        Optional: schedule AC tune-up or duct cleaning<br>\n
-          \       &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
-          Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-          Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
-          both heating and cooling are available as the weather transitions into warmer
-          months.\n    </p>\n\n  </body>\n</html>\n"
+  - action: rest_command.sendgrid_html
+    data:
+      subject: Spring Shoulder Season Coming Soon
+      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
+        \   <p>\n      Spring shoulder season begins soon. Nest will switch into <b>AUTO
+        mode</b> on April 1.\n    </p>\n\n    <p>\n      This allows the system to
+        automatically decide whether to heat or cool as temperatures warm up.\n    </p>\n\n
+        \   <p><b>Spring shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover
+        AC unit in backyard</li>\n      <li>Adjust vents to neutral or balanced flow</li>\n
+        \     <li>Keep whole-house humidifier OFF</li>\n      <li>\n        Check
+        filter (<a href=\"https://www.secondnature.com/login\">FilterEasy login</a>)\n
+        \     </li>\n      <li>\n        Optional: schedule AC tune-up or duct cleaning<br>\n
+        \       &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
+        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        both heating and cooling are available as the weather transitions into warmer
+        months.\n    </p>\n\n  </body>\n</html>\n"
   mode: single
-- id: "1771994259227"
+- id: '1771994259227'
   alias: Fall Pre-Season Email (Reminder)
   description: Sends Fall reminder email a few days before season activation
   triggers:
-    - at: 09:00:00
-      trigger: time
+  - at: 09:00:00
+    trigger: time
   conditions:
-    - condition: template
-      value_template: "{{ now().month == 8 and now().day == 29 }}"
+  - condition: template
+    value_template: '{{ now().month == 8 and now().day == 29 }}'
   actions:
-    - action: rest_command.sendgrid_html
-      data:
-        subject: Fall Shoulder Season Coming Soon
-        body:
-          "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-          20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-          \   <p>\n      Fall shoulder season begins soon. Nest will switch into <b>AUTO
-          mode</b> on September 1.\n    </p>\n\n    <p>\n      This allows the system
-          to automatically decide whether to heat or cool based on indoor conditions.\n
-          \   </p>\n\n    <p><b>Shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover
-          AC unit in backyard (system may cool on warm days)</li>\n      <li>Adjust
-          vents to neutral or balanced flow</li>\n      <li>Keep whole-house humidifier
-          OFF</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
-          login</a>)\n      </li>\n      <li>\n        Optional: schedule tune-up or
-          duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
-          Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-          Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
-          both heating and cooling are available as the weather shifts.\n    </p>\n\n
-          \ </body>\n</html>\n"
+  - action: rest_command.sendgrid_html
+    data:
+      subject: Fall Shoulder Season Coming Soon
+      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
+        \   <p>\n      Fall shoulder season begins soon. Nest will switch into <b>AUTO
+        mode</b> on September 1.\n    </p>\n\n    <p>\n      This allows the system
+        to automatically decide whether to heat or cool based on indoor conditions.\n
+        \   </p>\n\n    <p><b>Shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover
+        AC unit in backyard (system may cool on warm days)</li>\n      <li>Adjust
+        vents to neutral or balanced flow</li>\n      <li>Keep whole-house humidifier
+        OFF</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
+        login</a>)\n      </li>\n      <li>\n        Optional: schedule tune-up or
+        duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
+        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        both heating and cooling are available as the weather shifts.\n    </p>\n\n
+        \ </body>\n</html>\n"
   mode: single
-- id: "1772316486064"
+- id: '1772316486064'
   alias: Winter Morning Comfort Log to Notion
   description: Send Winter Morning Comfort log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.winter_morning_comfort_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_morning_comfort_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Winter Morning Comfort\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.winter_morning_comfort_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Winter Morning Comfort\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.winter_morning_comfort_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772316682446"
+- id: '1772316682446'
   alias: Winter Evening Comfort Log to Notion
   description: Send Winter Evening Comfort log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.winter_evening_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_evening_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Winter Evening Comfort\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.winter_evening_log') }}\",\n  \"timestamp\":
-          \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Winter Evening Comfort\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.winter_evening_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772328269758"
+- id: '1772328269758'
   alias: Winter Overnight Log to Notion
-  description:
-    Send Winter Overnight log entry to Notion whenever the mode writes
+  description: Send Winter Overnight log entry to Notion whenever the mode writes
     to its log
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.winter_overnight_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_overnight_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Winter Overnight\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.winter_overnight_log') }}\",\n  \"timestamp\":
-          \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Winter Overnight\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.winter_overnight_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772328299799"
+- id: '1772328299799'
   alias: Winter Weekday Daytime Log to Notion
   description: Send Winter Weekday Daytime log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.winter_weekday_daytime_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_weekday_daytime_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Winter Weekday Daytime\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.winter_weekday_daytime_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Winter Weekday Daytime\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.winter_weekday_daytime_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772328326704"
+- id: '1772328326704'
   alias: Winter Weekend Daytime Log to Notion
   description: Send Winter Weekend Daytime log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.winter_weekend_daytime_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_weekend_daytime_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Winter Weekend Daytime\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.winter_weekend_daytime_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Winter Weekend Daytime\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.winter_weekend_daytime_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772328348634"
+- id: '1772328348634'
   alias: Winter Cloudy Heating Log to Notion
   description: Send Winter Cloudy Heating log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.winter_cloudy_heating_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_cloudy_heating_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Winter Cloudy Heating\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.winter_cloudy_heating_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Winter Cloudy Heating\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.winter_cloudy_heating_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772328374568"
+- id: '1772328374568'
   alias: Winter Sunny Heating Log to Notion
   description: Send Winter Sunny Heating log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.winter_sunny_heating_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_sunny_heating_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Winter Sunny Heating\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.winter_sunny_heating_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Winter Sunny Heating\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.winter_sunny_heating_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772330526484"
+- id: '1772330526484'
   alias: Fall Baseline Log to Notion
   description: Send Fall Baseline log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.fall_baseline_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.fall_baseline_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Fall
+  - condition: state
+    entity_id: input_select.current_season
+    state: Fall
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Fall Baseline\",\n  \"category\": \"Mode\",\n  \"details\":
-          \"{{ states('input_text.fall_baseline_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
-          }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Fall Baseline\",\n  \"category\": \"Mode\",\n  \"details\":
+        \"{{ states('input_text.fall_baseline_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
+        }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772330556997"
+- id: '1772330556997'
   alias: Fall Cool Day Log to Notion
   description: Send Fall Cool Day log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.fall_cool_day_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.fall_cool_day_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Fall
+  - condition: state
+    entity_id: input_select.current_season
+    state: Fall
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Fall Cool Day\",\n  \"category\": \"Mode\",\n  \"details\":
-          \"{{ states('input_text.fall_cool_day_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
-          }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Fall Cool Day\",\n  \"category\": \"Mode\",\n  \"details\":
+        \"{{ states('input_text.fall_cool_day_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
+        }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772330642399"
+- id: '1772330642399'
   alias: Fall Warm Day Log to Notion
   description: Send Fall Warm Day log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.fall_warm_day_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.fall_warm_day_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Fall
+  - condition: state
+    entity_id: input_select.current_season
+    state: Fall
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Fall Warm Day\",\n  \"category\": \"Mode\",\n  \"details\":
-          \"{{ states('input_text.fall_warm_day_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
-          }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Fall Warm Day\",\n  \"category\": \"Mode\",\n  \"details\":
+        \"{{ states('input_text.fall_warm_day_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
+        }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589196436"
+- id: '1772589196436'
   alias: Spring Baseline Log to Notion
   description: Send Spring Baseline log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.spring_baseline_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.spring_baseline_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Spring
+  - condition: state
+    entity_id: input_select.current_season
+    state: Spring
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Spring Baseline\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.spring_baseline_log') }}\",\n  \"timestamp\":
-          \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Spring Baseline\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.spring_baseline_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589235456"
+- id: '1772589235456'
   alias: Spring Cool Day Log to Notion
   description: Send Spring Cool Day log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.spring_cool_day_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.spring_cool_day_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Spring
+  - condition: state
+    entity_id: input_select.current_season
+    state: Spring
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Spring Cool Day\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.spring_cool_day_log') }}\",\n  \"timestamp\":
-          \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Spring Cool Day\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.spring_cool_day_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589286527"
+- id: '1772589286527'
   alias: Spring Warm Day Log to Notion
   description: Send Spring Warm Day log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.spring_warm_day_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.spring_warm_day_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Spring
+  - condition: state
+    entity_id: input_select.current_season
+    state: Spring
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Spring Warm Day\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.spring_warm_day_log') }}\",\n  \"timestamp\":
-          \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Spring Warm Day\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.spring_warm_day_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589357879"
+- id: '1772589357879'
   alias: Summer Baseline Log to Notion
   description: Send Summer Baseline log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.summer_baseline_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_baseline_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Summer
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Summer Baseline\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.summer_baseline_log') }}\",\n  \"timestamp\":
-          \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Summer Baseline\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.summer_baseline_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589397792"
+- id: '1772589397792'
   alias: Summer Morning Comfort Log to Notion
   description: Send Summer Morning Comfort log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.summer_morning_comfort_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_morning_comfort_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Summer
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Summer Morning Comfort\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.summer_morning_comfort_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Summer Morning Comfort\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.summer_morning_comfort_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589457536"
+- id: '1772589457536'
   alias: Summer Evening Comfort Log to Notion
   description: Send Summer Evening Comfort log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.summer_evening_comfort_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_evening_comfort_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Summer
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Summer Evening Comfort\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.summer_evening_comfort_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Summer Evening Comfort\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.summer_evening_comfort_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589526458"
+- id: '1772589526458'
   alias: Summer Overnight Log to Notion
   description: Send Summer Overnight log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.summer_overnight_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_overnight_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Summer
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Summer Overnight\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.summer_overnight_log') }}\",\n  \"timestamp\":
-          \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n  \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Summer Overnight\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.summer_overnight_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589597165"
+- id: '1772589597165'
   alias: Summer Sunny Cooling Log to Notion
   description: Send Summer Sunny Cooling log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.summer_sunny_cooling_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_sunny_cooling_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Summer
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Summer Sunny Cooling\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.summer_sunny_cooling_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Summer Sunny Cooling\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.summer_sunny_cooling_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772589655373"
+- id: '1772589655373'
   alias: Summer Cloudy Cooling Log to Notion
   description: Send Summer Cloudy Cooling log entry to Notion
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.summer_cloudy_cooling_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_cloudy_cooling_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Summer
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Summer Cloudy Cooling\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.summer_cloudy_cooling_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Summer Cloudy Cooling\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.summer_cloudy_cooling_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Summer\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772871730552"
+- id: '1772871730552'
   alias: Temporary Boost Heat Log to Notion
-  description:
-    Send Boost Heat log entry to Notion whenever the script writes to its
+  description: Send Boost Heat log entry to Notion whenever the script writes to its
     log
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.temporary_boost_heat_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_heat_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Temporary Boost Heat\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.temporary_boost_heat_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Temporary Boost Heat\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.temporary_boost_heat_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772872188373"
+- id: '1772872188373'
   alias: Temporary Boost Reset Log to Notion
   description: Send Reset log entry to Notion whenever the script writes to its log
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.temporary_boost_reset_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_reset_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Temporary Boost Reset\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.temporary_boost_reset_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Temporary Boost Reset\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.temporary_boost_reset_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
   mode: single
-- id: "1772873262255"
+- id: '1772873262255'
   alias: Temporary Boost Cool Log to Notion
-  description:
-    Send Boost Cool log entry to Notion whenever the script writes to its
+  description: Send Boost Cool log entry to Notion whenever the script writes to its
     log
   triggers:
-    - event_type: state_changed
-      event_data:
-        entity_id: input_text.temporary_boost_cool_log
-      trigger: event
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_cool_log
+    trigger: event
   conditions:
-    - condition: state
-      entity_id: input_select.current_season
-      state: Winter
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
   actions:
-    - delay: 00:00:01
-    - data:
-        payload:
-          "{\n  \"event\": \"Temporary Boost Cool\",\n  \"category\": \"Mode\",\n
-          \ \"details\": \"{{ states('input_text.temporary_boost_cool_log') }}\",\n
-          \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
-          \ \"source\": \"HA\"\n}\n"
-      action: rest_command.log_to_notion
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Temporary Boost Cool\",\n  \"category\": \"Mode\",\n
+        \ \"details\": \"{{ states('input_text.temporary_boost_cool_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Winter\",\n
+        \ \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
+  mode: single
+- id: '1773527264191'
+  alias: Fall Baseline Log to Slack
+  description: Send Fall Baseline log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.fall_baseline_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Fall
+  actions:
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Fall Baseline\",\n
+        \ \"entity_id\": \"input_text.fall_baseline_log\",\n  \"state\": \"{{ states('input_text.fall_baseline_log')
+        }}\",\n  \"friendly_name\": \"Fall Baseline Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1773529212524'
+  alias: Winter Cloudy Heating Log to Slack
+  description: Send Winter Cloudy Heating log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_cloudy_heating_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Winter Cloudy
+        Heating\",\n  \"entity_id\": \"input_text.winter_cloudy_heating_log\",\n  \"state\":
+        \"{{ states('input_text.winter_cloudy_heating_log') }}\",\n  \"friendly_name\":
+        \"Winter Cloudy Heating Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529370070'
+  alias: Winter Evening Comfort Log to Slack
+  description: Send Winter Evening Comfort log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_evening_comfort_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Winter Evening
+        Comfort\",\n  \"entity_id\": \"input_text.winter_evening_comfort_log\",\n
+        \ \"state\": \"{{ states('input_text.winter_evening_comfort_log') }}\",\n
+        \ \"friendly_name\": \"Winter Evening Comfort Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529392162'
+  alias: Winter Morning Comfort Log to Slack
+  description: Send Winter Morning Comfort log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_morning_comfort_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Winter Morning
+        Comfort\",\n  \"entity_id\": \"input_text.winter_morning_comfort_log\",\n
+        \ \"state\": \"{{ states('input_text.winter_morning_comfort_log') }}\",\n
+        \ \"friendly_name\": \"Winter Morning Comfort Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529411065'
+  alias: Winter Overnight Log to Slack
+  description: Send Winter Overnight log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_overnight_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Winter Overnight\",\n
+        \ \"entity_id\": \"input_text.winter_overnight_log\",\n  \"state\": \"{{ states('input_text.winter_overnight_log')
+        }}\",\n  \"friendly_name\": \"Winter Overnight Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529427962'
+  alias: Winter Sunny Heating Log to Slack
+  description: Send Winter Sunny Heating log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_sunny_heating_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Winter Sunny
+        Heating\",\n  \"entity_id\": \"input_text.winter_sunny_heating_log\",\n  \"state\":
+        \"{{ states('input_text.winter_sunny_heating_log') }}\",\n  \"friendly_name\":
+        \"Winter Sunny Heating Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529445882'
+  alias: Winter Weekday Daytime Log to Slack
+  description: Send Winter Weekday Daytime log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_weekday_daytime_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Winter Weekday
+        Daytime\",\n  \"entity_id\": \"input_text.winter_weekday_daytime_log\",\n
+        \ \"state\": \"{{ states('input_text.winter_weekday_daytime_log') }}\",\n
+        \ \"friendly_name\": \"Winter Weekday Daytime Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529467078'
+  alias: Winter Weekend Daytime Log to Slack
+  description: Send Winter Weekend Daytime log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.winter_weekend_daytime_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Winter
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Winter Weekend
+        Daytime\",\n  \"entity_id\": \"input_text.winter_weekend_daytime_log\",\n
+        \ \"state\": \"{{ states('input_text.winter_weekend_daytime_log') }}\",\n
+        \ \"friendly_name\": \"Winter Weekend Daytime Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529552113'
+  alias: Spring Baseline Log to Slack
+  description: Send Spring Baseline log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.spring_baseline_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Spring
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Spring Baseline\",\n
+        \ \"entity_id\": \"input_text.spring_baseline_log\",\n  \"state\": \"{{ states('input_text.spring_baseline_log')
+        }}\",\n  \"friendly_name\": \"Spring Baseline Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529576921'
+  alias: Spring Cool Day Log to Slack
+  description: Send Spring Cool Day log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.spring_cool_day_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Spring
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Spring Cool Day\",\n
+        \ \"entity_id\": \"input_text.spring_cool_day_log\",\n  \"state\": \"{{ states('input_text.spring_cool_day_log')
+        }}\",\n  \"friendly_name\": \"Spring Cool Day Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529593439'
+  alias: Spring Warm Day Log to Slack
+  description: Send Spring Warm Day log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.spring_warm_day_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Spring
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Spring Warm Day\",\n
+        \ \"entity_id\": \"input_text.spring_warm_day_log\",\n  \"state\": \"{{ states('input_text.spring_warm_day_log')
+        }}\",\n  \"friendly_name\": \"Spring Warm Day Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529646167'
+  alias: Fall Cool Day Log to Slack
+  description: Send Fall Cool Day log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.fall_cool_day_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Fall
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Fall Cool Day\",\n
+        \ \"entity_id\": \"input_text.fall_cool_day_log\",\n  \"state\": \"{{ states('input_text.fall_cool_day_log')
+        }}\",\n  \"friendly_name\": \"Fall Cool Day Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529664365'
+  alias: Fall Warm Day Log to Slack
+  description: Send Fall Warm Day log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.fall_warm_day_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Fall
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Fall Warm Day\",\n
+        \ \"entity_id\": \"input_text.fall_warm_day_log\",\n  \"state\": \"{{ states('input_text.fall_warm_day_log')
+        }}\",\n  \"friendly_name\": \"Fall Warm Day Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529760909'
+  alias: Summer Baseline Log to Slack
+  description: Send Summer Baseline log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_baseline_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Summer Baseline\",\n
+        \ \"entity_id\": \"input_text.summer_baseline_log\",\n  \"state\": \"{{ states('input_text.summer_baseline_log')
+        }}\",\n  \"friendly_name\": \"Summer Baseline Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529781854'
+  alias: Summer Cloudy Cooling Log to Slack
+  description: Send Summer Cloudy Cooling log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_cloudy_cooling_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Summer Cloudy
+        Cooling\",\n  \"entity_id\": \"input_text.summer_cloudy_cooling_log\",\n  \"state\":
+        \"{{ states('input_text.summer_cloudy_cooling_log') }}\",\n  \"friendly_name\":
+        \"Summer Cloudy Cooling Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529800496'
+  alias: Summer Evening Comfort Log to Slack
+  description: Send Summer Evening Comfort log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_evening_comfort_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Summer Evening
+        Comfort\",\n  \"entity_id\": \"input_text.summer_evening_comfort_log\",\n
+        \ \"state\": \"{{ states('input_text.summer_evening_comfort_log') }}\",\n
+        \ \"friendly_name\": \"Summer Evening Comfort Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529830226'
+  alias: Summer Morning Comfort Log to Slack
+  description: Send Summer Morning Comfort log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_morning_comfort_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Summer Morning
+        Comfort\",\n  \"entity_id\": \"input_text.summer_morning_comfort_log\",\n
+        \ \"state\": \"{{ states('input_text.summer_morning_comfort_log') }}\",\n
+        \ \"friendly_name\": \"Summer Morning Comfort Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529846038'
+  alias: Summer Overnight Log to Slack
+  description: Send Summer Overnight log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_overnight_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Summer Overnight\",\n
+        \ \"entity_id\": \"input_text.summer_overnight_log\",\n  \"state\": \"{{ states('input_text.summer_overnight_log')
+        }}\",\n  \"friendly_name\": \"Summer Overnight Log\",\n  \"timestamp\": \"{{
+        now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773529862651'
+  alias: Summer Sunny Cooling Log to Slack
+  description: Send Summer Sunny Cooling log entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.summer_sunny_cooling_log
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_select.current_season
+    state: Summer
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Summer Sunny
+        Cooling\",\n  \"entity_id\": \"input_text.summer_sunny_cooling_log\",\n  \"state\":
+        \"{{ states('input_text.summer_sunny_cooling_log') }}\",\n  \"friendly_name\":
+        \"Summer Sunny Cooling Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
   mode: single

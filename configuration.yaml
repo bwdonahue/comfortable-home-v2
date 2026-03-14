@@ -41,7 +41,7 @@ rest_command:
       }
 
   log_to_notion:
-    url: "https://hook.us2.make.com/fdo8led4nxl2dgdciqugpdoconphsi2y"
+    url: !secret notion_webhook_url
     method: POST
     headers:
       content-type: "application/json"
@@ -49,18 +49,12 @@ rest_command:
       {{ payload }}
 
   slack_webhook_prod:
-    url: "https://hook.us2.make.com/cjumr68kbgduhdlrhowal4p5u1n8bg5n"
+    url: !secret make_webhook_prod_url
     method: POST
     headers:
       Content-Type: "application/json"
     payload: >
-      {
-        "source": "home_assistant",
-        "event": "{{ event }}",
-        "entity_id": "{{ entity_id }}",
-        "state": "{{ state }}",
-        "friendly_name": "{{ friendly_name }}"
-      }
+      {{ payload }}
 
   uptimerobot_pause:
     url: "https://api.uptimerobot.com/v2/editMonitor"
