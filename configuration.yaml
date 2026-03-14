@@ -48,6 +48,20 @@ rest_command:
     payload: >
       {{ payload }}
 
+  slack_webhook_prod:
+    url: "https://hook.us2.make.com/cjumr68kbgduhdlrhowal4p5u1n8bg5n"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    payload: >
+      {
+        "source": "home_assistant",
+        "event": "{{ event }}",
+        "entity_id": "{{ entity_id }}",
+        "state": "{{ state }}",
+        "friendly_name": "{{ friendly_name }}"
+      }
+
   uptimerobot_pause:
     url: "https://api.uptimerobot.com/v2/editMonitor"
     method: POST
