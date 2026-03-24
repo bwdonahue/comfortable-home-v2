@@ -1082,7 +1082,8 @@
   - entity_id: input_button.preview_fall_shoulder_email
     trigger: state
   actions:
-  - data:
+  - action: rest_command.sendgrid_html
+    data:
       subject: Fall Shoulder Season Activated
       body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
         20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
@@ -1099,7 +1100,10 @@
         Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
         both heating and cooling are available as the weather shifts.\n    </p>\n\n
         \ </body>\n</html>\n"
-    action: rest_command.sendgrid_html
+  - action: notify.the_donahue_soto_house
+    data:
+      message: "\U0001F342 Fall Shoulder Season activated."
+      target: '#comfortable-home-feed'
   mode: single
 - id: '1769841042882'
   alias: Send Spring Shoulder Email
@@ -1108,7 +1112,8 @@
   - entity_id: input_button.preview_spring_shoulder_email
     trigger: state
   actions:
-  - data:
+  - action: rest_command.sendgrid_html
+    data:
       subject: Spring Shoulder Season Activated
       body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
         20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
@@ -1125,7 +1130,10 @@
         Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
         both heating and cooling are available as the weather transitions into warmer
         months.\n    </p>\n\n  </body>\n</html>\n"
-    action: rest_command.sendgrid_html
+  - action: notify.the_donahue_soto_house
+    data:
+      message: "\U0001F324️ Spring Shoulder Season activated."
+      target: '#comfortable-home-feed'
   mode: single
 - id: '1769841892716'
   alias: Send Summer Email
@@ -1134,7 +1142,8 @@
   - entity_id: input_button.preview_summer_email
     trigger: state
   actions:
-  - data:
+  - action: rest_command.sendgrid_html
+    data:
       subject: Summer Mode Activated
       body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
         20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
@@ -1150,7 +1159,10 @@
         Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
         the home is ready for warm weather and solar‑aware cooling routines.\n    </p>\n\n
         \ </body>\n</html>\n"
-    action: rest_command.sendgrid_html
+  - action: notify.the_donahue_soto_house
+    data:
+      message: ☀️ Summer Mode activated.
+      target: '#comfortable-home-feed'
   mode: single
 - id: '1769842193327'
   alias: Send Winter Email
@@ -1159,7 +1171,8 @@
   - entity_id: input_button.preview_winter_email
     trigger: state
   actions:
-  - data:
+  - action: rest_command.sendgrid_html
+    data:
       subject: Winter Mode Activated
       body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
         20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
@@ -1175,7 +1188,10 @@
         Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
         the home is ready for cold weather and solar‑aware heating routines.\n    </p>\n\n
         \ </body>\n</html>\n"
-    action: rest_command.sendgrid_html
+  - action: notify.the_donahue_soto_house
+    data:
+      message: ❄️ Winter Mode activated.
+      target: '#comfortable-home-feed'
   mode: single
 - id: '1770260562783'
   alias: Spring + Fall 6 Degree Safety Gap Enforcement
@@ -1456,6 +1472,10 @@
     - mon
   actions:
   - action: rest_command.uptimerobot_pause
+  - action: notify.the_donahue_soto_house
+    data:
+      message: ⏸️ UptimeRobot monitoring paused for the Monday patch window.
+      target: '#comfortable-home-feed'
   mode: single
 - id: '1771170653160'
   alias: Resume UptimeRobot Monitoring
@@ -1469,6 +1489,10 @@
     - mon
   actions:
   - action: rest_command.uptimerobot_resume
+  - action: notify.the_donahue_soto_house
+    data:
+      message: ▶️ UptimeRobot monitoring resumed after the Monday patch window.
+      target: '#comfortable-home-feed'
   mode: single
 - id: '1771994049128'
   alias: Spring Pre-Season Email (Reminder)
@@ -1484,20 +1508,23 @@
     data:
       subject: Spring Shoulder Season Coming Soon
       body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-        \   <p>\n      Spring shoulder season begins soon. Nest will switch into <b>AUTO
-        mode</b> on April 1.\n    </p>\n\n    <p>\n      This allows the system to
-        automatically decide whether to heat or cool as temperatures warm up.\n    </p>\n\n
-        \   <p><b>Spring shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover
-        AC unit in backyard</li>\n      <li>Adjust vents to neutral or balanced flow</li>\n
-        \     <li>Keep whole-house humidifier OFF</li>\n      <li>\n        Check
-        filter (<a href=\"https://www.secondnature.com/login\">FilterEasy login</a>)\n
-        \     </li>\n      <li>\n        Optional: schedule AC tune-up or duct cleaning<br>\n
-        \       &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
+        20px; line-height: 1.5; max-width: 600px;'>\n    <p>Hi Bryan,</p>\n    <p>\n
+        \     Spring shoulder season begins soon. Nest will switch into <b>AUTO mode</b>
+        on April 1.\n    </p>\n    <p>\n      This allows the system to automatically
+        decide whether to heat or cool as temperatures warm up.\n    </p>\n    <p><b>Spring
+        shoulder season checklist:</b></p>\n    <ul>\n      <li>Uncover AC unit in
+        backyard</li>\n      <li>Adjust vents to neutral or balanced flow</li>\n      <li>Keep
+        whole-house humidifier OFF</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
+        login</a>)\n      </li>\n      <li>\n        Optional: schedule AC tune-up
+        or duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
         Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n    <p>\n      This ensures
         both heating and cooling are available as the weather transitions into warmer
-        months.\n    </p>\n\n  </body>\n</html>\n"
+        months.\n    </p>\n  </body>\n</html>\n"
+  - action: notify.the_donahue_soto_house
+    data:
+      message: "\U0001F331 The house is preparing for spring."
+      target: '#comfortable-home-feed'
   mode: single
 - id: '1771994259227'
   alias: Fall Pre-Season Email (Reminder)
@@ -1513,20 +1540,24 @@
     data:
       subject: Fall Shoulder Season Coming Soon
       body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-        \   <p>\n      Fall shoulder season begins soon. Nest will switch into <b>AUTO
-        mode</b> on September 1.\n    </p>\n\n    <p>\n      This allows the system
-        to automatically decide whether to heat or cool based on indoor conditions.\n
-        \   </p>\n\n    <p><b>Shoulder season checklist:</b></p>\n\n    <ul>\n      <li>Uncover
-        AC unit in backyard (system may cool on warm days)</li>\n      <li>Adjust
-        vents to neutral or balanced flow</li>\n      <li>Keep whole-house humidifier
-        OFF</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
+        20px; line-height: 1.5; max-width: 600px;'>\n    <p>Hi Bryan,</p>\n    <p>\n
+        \     Fall shoulder season begins soon. Nest will switch into <b>AUTO mode</b>
+        on September 1.\n    </p>\n    <p>\n      This allows the system to automatically
+        decide whether to heat or cool based on indoor conditions.\n    </p>\n    <p><b>Shoulder
+        season checklist:</b></p>\n    <ul>\n      <li>Uncover AC unit in backyard
+        (system may cool on warm days)</li>\n      <li>Adjust vents to neutral or
+        balanced flow</li>\n      <li>Keep whole-house humidifier OFF</li>\n      <li>\n
+        \       Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
         login</a>)\n      </li>\n      <li>\n        Optional: schedule tune-up or
         duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
         Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n\n    <p>\n      This ensures
-        both heating and cooling are available as the weather shifts.\n    </p>\n\n
+        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n    <p>\n      This ensures
+        both heating and cooling are available as the weather shifts.\n    </p>\n
         \ </body>\n</html>\n"
+  - action: notify.the_donahue_soto_house
+    data:
+      message: "\U0001F341 The house is preparing for fall."
+      target: '#comfortable-home-feed'
   mode: single
 - id: '1772316486064'
   alias: Winter Morning Comfort Log to Notion
@@ -1927,10 +1958,7 @@
     event_data:
       entity_id: input_text.temporary_boost_heat_log
     trigger: event
-  conditions:
-  - condition: state
-    entity_id: input_select.current_season
-    state: Winter
+  conditions: []
   actions:
   - delay: 00:00:01
   - data:
@@ -1948,10 +1976,7 @@
     event_data:
       entity_id: input_text.temporary_boost_reset_log
     trigger: event
-  conditions:
-  - condition: state
-    entity_id: input_select.current_season
-    state: Winter
+  conditions: []
   actions:
   - delay: 00:00:01
   - data:
@@ -1970,10 +1995,7 @@
     event_data:
       entity_id: input_text.temporary_boost_cool_log
     trigger: event
-  conditions:
-  - condition: state
-    entity_id: input_select.current_season
-    state: Winter
+  conditions: []
   actions:
   - delay: 00:00:01
   - data:
@@ -2031,7 +2053,7 @@
   triggers:
   - event_type: state_changed
     event_data:
-      entity_id: input_text.winter_evening_comfort_log
+      entity_id: input_text.winter_evening_log
     trigger: event
   conditions:
   - condition: state
@@ -2042,10 +2064,9 @@
   - action: rest_command.slack_webhook_prod
     data:
       payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Winter Evening
-        Comfort\",\n  \"entity_id\": \"input_text.winter_evening_comfort_log\",\n
-        \ \"state\": \"{{ states('input_text.winter_evening_comfort_log') }}\",\n
-        \ \"friendly_name\": \"Winter Evening Comfort Log\",\n  \"timestamp\": \"{{
-        now().isoformat() }}\"\n}\n"
+        Comfort\",\n  \"entity_id\": \"input_text.winter_evening_log\",\n  \"state\":
+        \"{{ states('input_text.winter_evening_log') }}\",\n  \"friendly_name\": \"Winter
+        Evening Comfort Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
   mode: single
 - id: '1773529392162'
   alias: Winter Morning Comfort Log to Slack
@@ -2387,4 +2408,60 @@
         Cooling\",\n  \"entity_id\": \"input_text.summer_sunny_cooling_log\",\n  \"state\":
         \"{{ states('input_text.summer_sunny_cooling_log') }}\",\n  \"friendly_name\":
         \"Summer Sunny Cooling Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773808686438'
+  alias: Temporary Boost Reset Log to Slack
+  description: Send Reset log entry to Slack whenever the script writes to its log
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_reset_log
+    trigger: event
+  conditions: []
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Temporary Boost
+        Reset\",\n  \"entity_id\": \"input_text.temporary_boost_reset_log\",\n  \"state\":
+        \"{{ states('input_text.temporary_boost_reset_log') }}\",\n  \"friendly_name\":
+        \"Temporary Boost Reset Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773808804686'
+  alias: Temporary Boost Heat Log to Slack
+  description: Send Heat Boost log entry to Slack whenever the script writes to its
+    log
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_heat_log
+    trigger: event
+  conditions: []
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Temporary Boost
+        Heat\",\n  \"entity_id\": \"input_text.temporary_boost_heat_log\",\n  \"state\":
+        \"{{ states('input_text.temporary_boost_heat_log') }}\",\n  \"friendly_name\":
+        \"Temporary Boost Heat Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+  mode: single
+- id: '1773808869414'
+  alias: Temporary Boost Cool Log to Slack
+  description: Send Cool Boost log entry to Slack whenever the script writes to its
+    log
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.temporary_boost_cool_log
+    trigger: event
+  conditions: []
+  actions:
+  - delay: 00:00:01
+  - action: rest_command.slack_webhook_prod
+    data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Temporary Boost
+        Cool\",\n  \"entity_id\": \"input_text.temporary_boost_cool_log\",\n  \"state\":
+        \"{{ states('input_text.temporary_boost_cool_log') }}\",\n  \"friendly_name\":
+        \"Temporary Boost Cool Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
   mode: single
