@@ -333,33 +333,45 @@
   description: Activate Spring Shoulder Season using baseline helpers every April
     1st at 5 AM
   triggers:
-  - at: 05:00:00
-    trigger: time
+  - trigger: time
+    at: 05:00:00
   conditions:
   - condition: template
     value_template: '{{ now().month == 4 and now().day == 1 }}'
   actions:
-  - target:
+  - action: input_select.select_option
+    target:
       entity_id: input_select.current_season
     data:
       option: Spring
-    action: input_select.select_option
   - action: climate.set_hvac_mode
     target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
+  - delay: 00:00:03
   - action: climate.set_temperature
     target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: '{{ states(''input_number.spring_baseline_heat_temp'') | int
+      target_temp_low: '{{ states(''input_number.spring_baseline_heat_temp'') | float
         }}'
-      target_temp_high: '{{ states(''input_number.spring_baseline_cool_temp'') | int
+      target_temp_high: '{{ states(''input_number.spring_baseline_cool_temp'') | float
         }}'
   - action: automation.trigger
     target:
       entity_id: automation.send_spring_shoulder_email
+    data:
+      skip_condition: true
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.spring_shoulder_baseline_log
+    data:
+      value: 'SPRING SHOULDER ACTIVATION — BASELINE {{ states(''input_number.spring_baseline_heat_temp'')
+        | int }}–{{ states(''input_number.spring_baseline_cool_temp'') | int }}°F
+        — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
   mode: single
 - id: '1766215215363'
   alias: Fall Shoulder Season Activation
@@ -811,11 +823,11 @@
       entity_id: input_boolean.summer_cloudy_active
   mode: single
 - id: '1767162828170'
-  alias: Spring Temperature Baseline (10 AM)
+  alias: Spring Temperature Baseline (Every 6 Hours)
   description: Apply Spring baseline temps using helpers during April and May
   triggers:
-  - trigger: time
-    at: '10:00:00'
+  - trigger: time_pattern
+    hours: /6
   conditions:
   - condition: template
     value_template: '{{ now().month in [4, 5] }}'
@@ -890,12 +902,17 @@
   - trigger: numeric_state
     entity_id: sensor.st_00196977_temperature
     above: 75
+  - trigger: time_pattern
+    minutes: /30
   conditions:
   - condition: template
     value_template: '{{ now().month in [4, 5] }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    above: 75
   - condition: template
     value_template: "{{\n  state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')))
@@ -910,17 +927,17 @@
     target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: '{{ states(''input_number.spring_warm_day_cooling_heat_temp'')
-        | int }}'
-      target_temp_high: '{{ states(''input_number.spring_warm_day_cooling_cool_temp'')
-        | int }}'
+      target_temp_low: '{{ states(''input_number.spring_warm_day_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.spring_warm_day_cool_temp'') | int
+        }}'
   - action: input_text.set_value
     target:
       entity_id: input_text.spring_shoulder_warm_day_log
     data:
-      value: 'WARM-DAY COOLING {{ states(''input_number.spring_warm_day_cooling_heat_temp'')
-        | int }}–{{ states(''input_number.spring_warm_day_cooling_cool_temp'') | int
-        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+      value: 'WARM-DAY COOLING {{ states(''input_number.spring_warm_day_heat_temp'')
+        | int }}–{{ states(''input_number.spring_warm_day_cool_temp'') | int }}°F
+        — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
         '
   mode: single
@@ -974,12 +991,17 @@
   - trigger: numeric_state
     entity_id: sensor.st_00196977_temperature
     below: 55
+  - trigger: time_pattern
+    minutes: /30
   conditions:
   - condition: template
     value_template: '{{ now().month in [4, 5] }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    below: 55
   - condition: template
     value_template: "{{\n  state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')))
@@ -994,17 +1016,17 @@
     target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: '{{ states(''input_number.spring_cool_day_heating_heat_temp'')
-        | int }}'
-      target_temp_high: '{{ states(''input_number.spring_cool_day_heating_cool_temp'')
-        | int }}'
+      target_temp_low: '{{ states(''input_number.spring_cool_day_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.spring_cool_day_cool_temp'') | int
+        }}'
   - action: input_text.set_value
     target:
       entity_id: input_text.spring_shoulder_cool_day_log
     data:
-      value: 'COOL-DAY HEATING {{ states(''input_number.spring_cool_day_heating_heat_temp'')
-        | int }}–{{ states(''input_number.spring_cool_day_heating_cool_temp'') | int
-        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+      value: 'COOL-DAY HEATING {{ states(''input_number.spring_cool_day_heat_temp'')
+        | int }}–{{ states(''input_number.spring_cool_day_cool_temp'') | int }}°F
+        — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
         '
   mode: single
@@ -1134,7 +1156,7 @@
     data:
       message: "\U0001F324️ Spring Shoulder Season activated."
       target: '#comfortable-home-feed'
-  mode: single
+  mode: restart
 - id: '1769841892716'
   alias: Send Summer Email
   description: Send Summer Mode HTML email
@@ -1769,10 +1791,8 @@
   alias: Spring Baseline Log to Notion
   description: Send Spring Baseline log entry to Notion
   triggers:
-  - event_type: state_changed
-    event_data:
-      entity_id: input_text.spring_baseline_log
-    trigger: event
+  - entity_id: input_text.spring_shoulder_baseline_log
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_select.current_season
@@ -1781,49 +1801,48 @@
   - delay: 00:00:01
   - data:
       payload: "{\n  \"event\": \"Spring Baseline\",\n  \"category\": \"Mode\",\n
-        \ \"details\": \"{{ states('input_text.spring_baseline_log') }}\",\n  \"timestamp\":
-        \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
+        \ \"details\": \"{{ states('input_text.spring_shoulder_baseline_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n
+        \ \"source\": \"HA\"\n}\n"
     action: rest_command.log_to_notion
   mode: single
 - id: '1772589235456'
   alias: Spring Cool Day Log to Notion
   description: Send Spring Cool Day log entry to Notion
   triggers:
-  - event_type: state_changed
-    event_data:
-      entity_id: input_text.spring_cool_day_log
-    trigger: event
+  - entity_id: input_text.spring_shoulder_cool_day_log
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_select.current_season
     state: Spring
   actions:
   - delay: 00:00:01
-  - data:
+  - action: rest_command.log_to_notion
+    data:
       payload: "{\n  \"event\": \"Spring Cool Day\",\n  \"category\": \"Mode\",\n
-        \ \"details\": \"{{ states('input_text.spring_cool_day_log') }}\",\n  \"timestamp\":
-        \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
-    action: rest_command.log_to_notion
+        \ \"details\": \"{{ states('input_text.spring_shoulder_cool_day_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n
+        \ \"source\": \"HA\"\n}\n"
   mode: single
 - id: '1772589286527'
   alias: Spring Warm Day Log to Notion
   description: Send Spring Warm Day log entry to Notion
   triggers:
-  - event_type: state_changed
-    event_data:
-      entity_id: input_text.spring_warm_day_log
-    trigger: event
+  - entity_id: input_text.spring_shoulder_warm_day_log
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_select.current_season
     state: Spring
   actions:
   - delay: 00:00:01
-  - data:
+  - action: rest_command.log_to_notion
+    data:
       payload: "{\n  \"event\": \"Spring Warm Day\",\n  \"category\": \"Mode\",\n
-        \ \"details\": \"{{ states('input_text.spring_warm_day_log') }}\",\n  \"timestamp\":
-        \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n  \"source\": \"HA\"\n}\n"
-    action: rest_command.log_to_notion
+        \ \"details\": \"{{ states('input_text.spring_shoulder_warm_day_log') }}\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"Spring\",\n
+        \ \"source\": \"HA\"\n}\n"
   mode: single
 - id: '1772589357879'
   alias: Summer Baseline Log to Notion
@@ -2180,10 +2199,8 @@
   alias: Spring Baseline Log to Slack
   description: Send Spring Baseline log entry to Slack
   triggers:
-  - event_type: state_changed
-    event_data:
-      entity_id: input_text.spring_baseline_log
-    trigger: event
+  - entity_id: input_text.spring_shoulder_baseline_log
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_select.current_season
@@ -2193,7 +2210,7 @@
   - action: rest_command.slack_webhook_prod
     data:
       payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Spring Baseline\",\n
-        \ \"entity_id\": \"input_text.spring_baseline_log\",\n  \"state\": \"{{ states('input_text.spring_baseline_log')
+        \ \"entity_id\": \"input_text.spring_baseline_log\",\n  \"state\": \"{{ states('input_text.spring_shoulder_baseline_log')
         }}\",\n  \"friendly_name\": \"Spring Baseline Log\",\n  \"timestamp\": \"{{
         now().isoformat() }}\"\n}\n"
   mode: single
@@ -2201,10 +2218,8 @@
   alias: Spring Cool Day Log to Slack
   description: Send Spring Cool Day log entry to Slack
   triggers:
-  - event_type: state_changed
-    event_data:
-      entity_id: input_text.spring_cool_day_log
-    trigger: event
+  - entity_id: input_text.spring_shoulder_cool_day_log
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_select.current_season
@@ -2214,18 +2229,16 @@
   - action: rest_command.slack_webhook_prod
     data:
       payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Spring Cool Day\",\n
-        \ \"entity_id\": \"input_text.spring_cool_day_log\",\n  \"state\": \"{{ states('input_text.spring_cool_day_log')
-        }}\",\n  \"friendly_name\": \"Spring Cool Day Log\",\n  \"timestamp\": \"{{
-        now().isoformat() }}\"\n}\n"
+        \ \"entity_id\": \"input_text.spring_shoulder_cool_day_log\",\n  \"state\":
+        \"{{ states('input_text.spring_shoulder_cool_day_log') }}\",\n  \"friendly_name\":
+        \"Spring Cool Day Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
   mode: single
 - id: '1773529593439'
   alias: Spring Warm Day Log to Slack
   description: Send Spring Warm Day log entry to Slack
   triggers:
-  - event_type: state_changed
-    event_data:
-      entity_id: input_text.spring_warm_day_log
-    trigger: event
+  - entity_id: input_text.spring_shoulder_warm_day_log
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_select.current_season
@@ -2235,9 +2248,9 @@
   - action: rest_command.slack_webhook_prod
     data:
       payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Spring Warm Day\",\n
-        \ \"entity_id\": \"input_text.spring_warm_day_log\",\n  \"state\": \"{{ states('input_text.spring_warm_day_log')
-        }}\",\n  \"friendly_name\": \"Spring Warm Day Log\",\n  \"timestamp\": \"{{
-        now().isoformat() }}\"\n}\n"
+        \ \"entity_id\": \"input_text.spring_shoulder_warm_day_log\",\n  \"state\":
+        \"{{ states('input_text.spring_shoulder_warm_day_log') }}\",\n  \"friendly_name\":
+        \"Spring Warm Day Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
   mode: single
 - id: '1773529646167'
   alias: Fall Cool Day Log to Slack

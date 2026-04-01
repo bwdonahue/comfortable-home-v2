@@ -36,7 +36,7 @@ rest_command:
         "subject": "{{ subject }}",
         "content": [{
           "type": "text/html",
-          "value": {{ body | tojson }}
+          "value": "{{ body }}"
         }]
       }
 
