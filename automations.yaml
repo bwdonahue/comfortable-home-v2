@@ -344,6 +344,14 @@
       entity_id: input_select.current_season
     data:
       option: Spring
+  - action: input_text.set_value
+    target:
+      entity_id:
+      - input_text.fall_shoulder_warm_day_log
+      - input_text.fall_shoulder_cool_day_log
+      - input_text.fall_shoulder_baseline_log
+    data:
+      value: ''
   - action: climate.set_hvac_mode
     target:
       entity_id: climate.thermostat
@@ -354,9 +362,9 @@
     target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: '{{ states(''input_number.spring_baseline_heat_temp'') | float
+      target_temp_low: '{{ states(''input_number.spring_baseline_heat_temp'') | int
         }}'
-      target_temp_high: '{{ states(''input_number.spring_baseline_cool_temp'') | float
+      target_temp_high: '{{ states(''input_number.spring_baseline_cool_temp'') | int
         }}'
   - action: automation.trigger
     target:
@@ -367,9 +375,9 @@
     target:
       entity_id: input_text.spring_shoulder_baseline_log
     data:
-      value: 'SPRING SHOULDER ACTIVATION — BASELINE {{ states(''input_number.spring_baseline_heat_temp'')
-        | int }}–{{ states(''input_number.spring_baseline_cool_temp'') | int }}°F
-        — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+      value: 'BASELINE {{ states(''input_number.spring_baseline_heat_temp'') | int
+        }}–{{ states(''input_number.spring_baseline_cool_temp'') | int }}°F — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
 
         '
   mode: single
@@ -384,16 +392,25 @@
   - condition: template
     value_template: '{{ now().month == 9 and now().day == 1 }}'
   actions:
-  - target:
+  - action: input_select.select_option
+    target:
       entity_id: input_select.current_season
     data:
       option: Fall
-    action: input_select.select_option
+  - action: input_text.set_value
+    target:
+      entity_id:
+      - input_text.spring_shoulder_warm_day_log
+      - input_text.spring_shoulder_cool_day_log
+      - input_text.spring_shoulder_baseline_log
+    data:
+      value: ''
   - action: climate.set_hvac_mode
     target:
       entity_id: climate.thermostat
     data:
       hvac_mode: heat_cool
+  - delay: 00:00:03
   - action: climate.set_temperature
     target:
       entity_id: climate.thermostat
@@ -407,6 +424,15 @@
       entity_id: automation.send_fall_shoulder_email
     data:
       skip_condition: true
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.fall_shoulder_baseline_log
+    data:
+      value: 'BASELINE {{ states(''input_number.fall_baseline_heat_temp'') | int }}–{{
+        states(''input_number.fall_baseline_cool_temp'') | int }}°F — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
+
+        '
   mode: single
 - id: '1767155567195'
   alias: Summer Mode Activation
@@ -859,11 +885,11 @@
         '
   mode: single
 - id: '1767162914113'
-  alias: Fall Temperature Baseline (10 AM)
+  alias: Fall Temperature Baseline (Every 6 Hours)
   description: Apply Fall baseline temps using helpers during September and October
   triggers:
-  - trigger: time
-    at: '10:00:00'
+  - trigger: time_pattern
+    hours: /6
   conditions:
   - condition: template
     value_template: '{{ now().month in [9, 10] }}'
@@ -885,14 +911,14 @@
       target_temp_high: '{{ states(''input_number.fall_baseline_cool_temp'') | int
         }}'
   - action: input_text.set_value
+    target:
+      entity_id: input_text.fall_shoulder_baseline_log
     data:
       value: 'BASELINE {{ states(''input_number.fall_baseline_heat_temp'') | int }}–{{
         states(''input_number.fall_baseline_cool_temp'') | int }}°F — {{ now().strftime(''%b
         %d, %Y %I:%M %p'') }}
 
         '
-    target:
-      entity_id: input_text.fall_baseline_log
   mode: single
 - id: '1767163393411'
   alias: Spring Cooling Nudge (Warm Shoulder Days)
@@ -949,12 +975,17 @@
   - trigger: numeric_state
     entity_id: sensor.st_00196977_temperature
     above: 75
+  - trigger: time_pattern
+    minutes: /30
   conditions:
   - condition: template
     value_template: '{{ now().month in [9, 10] }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    above: 75
   - condition: template
     value_template: "{{\n  state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')))
@@ -969,19 +1000,19 @@
     target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: '{{ states(''input_number.fall_warm_day_cooling_heat_temp'')
-        | int }}'
-      target_temp_high: '{{ states(''input_number.fall_warm_day_cooling_cool_temp'')
-        | int }}'
+      target_temp_low: '{{ states(''input_number.fall_warm_day_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.fall_warm_day_cool_temp'') | int
+        }}'
   - action: input_text.set_value
+    target:
+      entity_id: input_text.fall_shoulder_warm_day_log
     data:
-      value: 'WARM-DAY COOLING {{ states(''input_number.fall_warm_day_cooling_heat_temp'')
-        | int }}–{{ states(''input_number.fall_warm_day_cooling_cool_temp'') | int
-        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+      value: 'WARM-DAY COOLING {{ states(''input_number.fall_warm_day_heat_temp'')
+        | int }}–{{ states(''input_number.fall_warm_day_cool_temp'') | int }}°F —
+        {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
         '
-    target:
-      entity_id: input_text.fall_warm_day_log
   mode: single
 - id: '1767163618085'
   alias: Spring Heating Nudge (Cool Shoulder Days)
@@ -1038,12 +1069,17 @@
   - trigger: numeric_state
     entity_id: sensor.st_00196977_temperature
     below: 55
+  - trigger: time_pattern
+    minutes: /30
   conditions:
   - condition: template
     value_template: '{{ now().month in [9, 10] }}'
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    below: 55
   - condition: template
     value_template: "{{\n  state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')))
@@ -1058,19 +1094,19 @@
     target:
       entity_id: climate.thermostat
     data:
-      target_temp_low: '{{ states(''input_number.fall_cool_day_heating_heat_temp'')
-        | int }}'
-      target_temp_high: '{{ states(''input_number.fall_cool_day_heating_cool_temp'')
-        | int }}'
+      target_temp_low: '{{ states(''input_number.fall_cool_day_heat_temp'') | int
+        }}'
+      target_temp_high: '{{ states(''input_number.fall_cool_day_cool_temp'') | int
+        }}'
   - action: input_text.set_value
+    target:
+      entity_id: input_text.fall_shoulder_cool_day_log
     data:
-      value: 'COOL-DAY HEATING {{ states(''input_number.fall_cool_day_heating_heat_temp'')
-        | int }}–{{ states(''input_number.fall_cool_day_heating_cool_temp'') | int
-        }}°F — {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
+      value: 'COOL-DAY HEATING {{ states(''input_number.fall_cool_day_heat_temp'')
+        | int }}–{{ states(''input_number.fall_cool_day_cool_temp'') | int }}°F —
+        {{ now().strftime(''%b %d, %Y %I:%M %p'') }}
 
         '
-    target:
-      entity_id: input_text.fall_cool_day_log
   mode: single
 - id: '1769406598805'
   alias: Temporary Comfort Reset Automation
@@ -1232,23 +1268,39 @@
     - input_number.fall_cool_day_heat_temp
     - input_number.fall_cool_day_cool_temp
     trigger: state
+  - entity_id: climate.thermostat
+    attribute: target_temp_low
+    trigger: state
+  - entity_id: climate.thermostat
+    attribute: target_temp_high
+    trigger: state
   actions:
   - variables:
-      changed: '{{ trigger.entity_id }}'
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: '{{ changed in [ ''input_number.spring_baseline_heat_temp'',
-          ''input_number.spring_baseline_cool_temp'' ] }}'
+      pairs:
+      - - input_number.spring_baseline_heat_temp
+        - input_number.spring_baseline_cool_temp
+      - - input_number.spring_warm_day_heat_temp
+        - input_number.spring_warm_day_cool_temp
+      - - input_number.spring_cool_day_heat_temp
+        - input_number.spring_cool_day_cool_temp
+      - - input_number.fall_baseline_heat_temp
+        - input_number.fall_baseline_cool_temp
+      - - input_number.fall_warm_day_heat_temp
+        - input_number.fall_warm_day_cool_temp
+      - - input_number.fall_cool_day_heat_temp
+        - input_number.fall_cool_day_cool_temp
+  - repeat:
+      for_each: '{{ pairs }}'
       sequence:
       - variables:
-          heat: '{{ states(''input_number.spring_baseline_heat_temp'') | int }}'
-          cool: '{{ states(''input_number.spring_baseline_cool_temp'') | int }}'
+          heat_entity: '{{ repeat.item[0] }}'
+          cool_entity: '{{ repeat.item[1] }}'
+          heat: '{{ states(heat_entity) | int }}'
+          cool: '{{ states(cool_entity) | int }}'
       - choose:
         - conditions:
           - condition: template
-            value_template: '{{ changed == ''input_number.spring_baseline_heat_temp''
-              }}'
+            value_template: '{{ trigger.entity_id == heat_entity }}'
           sequence:
           - choose:
             - conditions:
@@ -1256,15 +1308,14 @@
                 value_template: '{{ cool != heat + 6 }}'
               sequence:
               - target:
-                  entity_id: input_number.spring_baseline_cool_temp
+                  entity_id: '{{ cool_entity }}'
                 data:
                   value: '{{ heat + 6 }}'
                 action: input_number.set_value
       - choose:
         - conditions:
           - condition: template
-            value_template: '{{ changed == ''input_number.spring_baseline_cool_temp''
-              }}'
+            value_template: '{{ trigger.entity_id == cool_entity }}'
           sequence:
           - choose:
             - conditions:
@@ -1272,212 +1323,7 @@
                 value_template: '{{ heat != cool - 6 }}'
               sequence:
               - target:
-                  entity_id: input_number.spring_baseline_heat_temp
-                data:
-                  value: '{{ cool - 6 }}'
-                action: input_number.set_value
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: '{{ changed in [ ''input_number.spring_warm_day_heat_temp'',
-          ''input_number.spring_warm_day_cool_temp'' ] }}'
-      sequence:
-      - variables:
-          heat: '{{ states(''input_number.spring_warm_day_heat_temp'') | int }}'
-          cool: '{{ states(''input_number.spring_warm_day_cool_temp'') | int }}'
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.spring_warm_day_heat_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ cool != heat + 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.spring_warm_day_cool_temp
-                data:
-                  value: '{{ heat + 6 }}'
-                action: input_number.set_value
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.spring_warm_day_cool_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ heat != cool - 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.spring_warm_day_heat_temp
-                data:
-                  value: '{{ cool - 6 }}'
-                action: input_number.set_value
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: '{{ changed in [ ''input_number.spring_cool_day_heat_temp'',
-          ''input_number.spring_cool_day_cool_temp'' ] }}'
-      sequence:
-      - variables:
-          heat: '{{ states(''input_number.spring_cool_day_heat_temp'') | int }}'
-          cool: '{{ states(''input_number.spring_cool_day_cool_temp'') | int }}'
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.spring_cool_day_heat_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ cool != heat + 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.spring_cool_day_cool_temp
-                data:
-                  value: '{{ heat + 6 }}'
-                action: input_number.set_value
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.spring_cool_day_cool_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ heat != cool - 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.spring_cool_day_heat_temp
-                data:
-                  value: '{{ cool - 6 }}'
-                action: input_number.set_value
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: '{{ changed in [ ''input_number.fall_baseline_heat_temp'',
-          ''input_number.fall_baseline_cool_temp'' ] }}'
-      sequence:
-      - variables:
-          heat: '{{ states(''input_number.fall_baseline_heat_temp'') | int }}'
-          cool: '{{ states(''input_number.fall_baseline_cool_temp'') | int }}'
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.fall_baseline_heat_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ cool != heat + 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.fall_baseline_cool_temp
-                data:
-                  value: '{{ heat + 6 }}'
-                action: input_number.set_value
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.fall_baseline_cool_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ heat != cool - 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.fall_baseline_heat_temp
-                data:
-                  value: '{{ cool - 6 }}'
-                action: input_number.set_value
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: '{{ changed in [ ''input_number.fall_warm_day_heat_temp'',
-          ''input_number.fall_warm_day_cool_temp'' ] }}'
-      sequence:
-      - variables:
-          heat: '{{ states(''input_number.fall_warm_day_heat_temp'') | int }}'
-          cool: '{{ states(''input_number.fall_warm_day_cool_temp'') | int }}'
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.fall_warm_day_heat_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ cool != heat + 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.fall_warm_day_cool_temp
-                data:
-                  value: '{{ heat + 6 }}'
-                action: input_number.set_value
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.fall_warm_day_cool_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ heat != cool - 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.fall_warm_day_heat_temp
-                data:
-                  value: '{{ cool - 6 }}'
-                action: input_number.set_value
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: '{{ changed in [ ''input_number.fall_cool_day_heat_temp'',
-          ''input_number.fall_cool_day_cool_temp'' ] }}'
-      sequence:
-      - variables:
-          heat: '{{ states(''input_number.fall_cool_day_heat_temp'') | int }}'
-          cool: '{{ states(''input_number.fall_cool_day_cool_temp'') | int }}'
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.fall_cool_day_heat_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ cool != heat + 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.fall_cool_day_cool_temp
-                data:
-                  value: '{{ heat + 6 }}'
-                action: input_number.set_value
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ changed == ''input_number.fall_cool_day_cool_temp''
-              }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ heat != cool - 6 }}'
-              sequence:
-              - target:
-                  entity_id: input_number.fall_cool_day_heat_temp
+                  entity_id: '{{ heat_entity }}'
                 data:
                   value: '{{ cool - 6 }}'
                 action: input_number.set_value

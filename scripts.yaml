@@ -3,119 +3,216 @@ temporary_boost_heat:
   mode: single
   sequence:
   - variables:
-      now_ts: '{{ as_timestamp(now()) }}'
-      last: '{{ states(''input_number.last_raise_press'') | float }}'
-      diff: '{{ now_ts - last }}'
-  - condition: state
-    entity_id: input_boolean.temporary_boost_direction_lock
-    state: 'off'
-  - condition: template
-    value_template: '{{ diff > 3600 }}'
-  - target:
-      entity_id: input_number.last_raise_press
-    data:
-      value: '{{ now_ts }}'
-    action: input_number.set_value
-  - target:
-      entity_id: input_boolean.temporary_boost_active
-    action: input_boolean.turn_on
+      mode: '{{ states(''climate.thermostat'') }}'
   - variables:
-      current: '{{ state_attr(''climate.thermostat'', ''temperature'') | float }}'
-      new: '{{ current + 2 }}'
+      current_low: '{{ state_attr(''climate.thermostat'', ''target_temp_low'') | float(0)
+        }}'
+      current_high: '{{ state_attr(''climate.thermostat'', ''target_temp_high'') |
+        float(0) }}'
+      current_single: '{{ state_attr(''climate.thermostat'', ''temperature'') | float(0)
+        }}'
+  - variables:
+      current: "{% if mode == 'heat_cool' %}\n  {{ current_low }}\n{% elif mode ==
+        'heat' %}\n  {{ current_single }}\n{% else %}\n  {{ current_single }}\n{%
+        endif %}\n"
   - target:
-      entity_id: input_number.temporary_comfort_original_temp
+      entity_id: input_number.original_low_temp
     data:
-      value: '{{ current }}'
+      value: '{{ current_low }}'
     action: input_number.set_value
   - target:
-      entity_id: climate.thermostat
+      entity_id: input_number.original_high_temp
     data:
-      temperature: '{{ new }}'
-    action: climate.set_temperature
+      value: '{{ current_high }}'
+    action: input_number.set_value
   - target:
-      entity_id: timer.temporary_comfort_timer
+      entity_id: input_number.original_single_temp
     data:
-      duration: 01:00:00
-    action: timer.start
-  - target:
-      entity_id: input_boolean.temporary_boost_direction_lock
-    action: input_boolean.turn_on
-  - data:
-      value: Boost started (Heat) — {{ now().isoformat() }}
-    action: input_text.set_value
-    target:
-      entity_id: input_text.temporary_boost_heat_log
+      value: '{{ current_single }}'
+    action: input_number.set_value
+  - variables:
+      new: '{{ [current + 2, 50] | max }}'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ mode == ''heat_cool'' }}'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          target_temp_low: '{{ new }}'
+          target_temp_high: '{{ current_high }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_boolean.temporary_boost_active
+        action: input_boolean.turn_on
+      - target:
+          entity_id: input_boolean.temporary_boost_direction_lock
+        action: input_boolean.turn_on
+      - target:
+          entity_id: timer.temporary_comfort_timer
+        action: timer.start
+    - conditions:
+      - condition: template
+        value_template: '{{ mode == ''heat'' }}'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ new }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_boolean.temporary_boost_active
+        action: input_boolean.turn_on
+      - target:
+          entity_id: input_boolean.temporary_boost_direction_lock
+        action: input_boolean.turn_on
+      - target:
+          entity_id: timer.temporary_comfort_timer
+        action: timer.start
+    - conditions:
+      - condition: template
+        value_template: '{{ mode == ''cool'' }}'
+      sequence:
+      - target:
+          entity_id: input_boolean.temporary_boost_active
+        action: input_boolean.turn_on
+      - target:
+          entity_id: input_boolean.temporary_boost_direction_lock
+        action: input_boolean.turn_on
+      - target:
+          entity_id: timer.temporary_comfort_timer
+        action: timer.start
+  description: ''
 temporary_lower_cool:
   alias: Temporary Boost Cool
   mode: single
   sequence:
   - variables:
-      now_ts: '{{ as_timestamp(now()) }}'
-      last: '{{ states(''input_number.last_lower_press'') | float }}'
-      diff: '{{ now_ts - last }}'
-  - condition: state
-    entity_id: input_boolean.temporary_boost_direction_lock
-    state: 'off'
-  - condition: template
-    value_template: '{{ diff > 3600 }}'
-  - target:
-      entity_id: input_number.last_lower_press
-    data:
-      value: '{{ now_ts }}'
-    action: input_number.set_value
-  - target:
-      entity_id: input_boolean.temporary_boost_active
-    action: input_boolean.turn_on
+      mode: '{{ states(''climate.thermostat'') }}'
   - variables:
-      current: '{{ state_attr(''climate.thermostat'', ''temperature'') | float }}'
-      new: '{{ current - 2 }}'
+      current_low: '{{ state_attr(''climate.thermostat'', ''target_temp_low'') | float(0)
+        }}'
+      current_high: '{{ state_attr(''climate.thermostat'', ''target_temp_high'') |
+        float(0) }}'
+      current_single: '{{ state_attr(''climate.thermostat'', ''temperature'') | float(0)
+        }}'
+  - variables:
+      current: "{% if mode == 'heat_cool' %}\n  {{ current_high }}\n{% elif mode ==
+        'cool' %}\n  {{ current_single }}\n{% else %}\n  {{ current_single }}\n{%
+        endif %}\n"
   - target:
-      entity_id: input_number.temporary_comfort_original_temp
+      entity_id: input_number.original_low_temp
     data:
-      value: '{{ current }}'
+      value: '{{ current_low }}'
     action: input_number.set_value
   - target:
-      entity_id: climate.thermostat
+      entity_id: input_number.original_high_temp
     data:
-      temperature: '{{ new }}'
-    action: climate.set_temperature
+      value: '{{ current_high }}'
+    action: input_number.set_value
   - target:
-      entity_id: timer.temporary_comfort_timer
+      entity_id: input_number.original_single_temp
     data:
-      duration: 01:00:00
-    action: timer.start
-  - target:
-      entity_id: input_boolean.temporary_boost_direction_lock
-    action: input_boolean.turn_on
-  - target:
-      entity_id: input_text.temporary_boost_cool_log
-    data:
-      value: Temporary Boost Cool — {{ now().isoformat() }}
-    action: input_text.set_value
-temporary_comfort_reset:
-  alias: Temporary Comfort Reset
-  mode: single
-  sequence:
-  - target:
-      entity_id: input_boolean.temporary_boost_active
-    action: input_boolean.turn_off
+      value: '{{ current_single }}'
+    action: input_number.set_value
+  - variables:
+      new: '{{ [current - 2, 50] | max }}'
   - choose:
     - conditions:
       - condition: template
-        value_template: "{{\n  is_state('input_boolean.skipped_winter_morning_comfort',
-          'off') and\n  is_state('input_boolean.skipped_winter_weekday_daytime', 'off')
-          and\n  is_state('input_boolean.skipped_winter_weekend_daytime', 'off') and\n
-          \ is_state('input_boolean.skipped_winter_evenings', 'off') and\n  is_state('input_boolean.skipped_winter_overnight',
-          'off') and\n  is_state('input_boolean.skipped_summer_morning_comfort', 'off')
-          and\n  is_state('input_boolean.skipped_summer_baseline', 'off') and\n  is_state('input_boolean.skipped_summer_evening',
-          'off') and\n  is_state('input_boolean.skipped_summer_overnight', 'off')\n}}\n"
+        value_template: '{{ mode == ''heat_cool'' }}'
       sequence:
       - target:
           entity_id: climate.thermostat
         data:
-          temperature: '{{ states(''input_number.temporary_comfort_original_temp'')
-            | float }}'
+          target_temp_low: '{{ current_low }}'
+          target_temp_high: '{{ new }}'
         action: climate.set_temperature
+      - target:
+          entity_id: input_boolean.temporary_boost_active
+        action: input_boolean.turn_on
+      - target:
+          entity_id: input_boolean.temporary_boost_direction_lock
+        action: input_boolean.turn_on
+      - target:
+          entity_id: timer.temporary_comfort_timer
+        action: timer.start
+    - conditions:
+      - condition: template
+        value_template: '{{ mode == ''cool'' }}'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ new }}'
+        action: climate.set_temperature
+      - target:
+          entity_id: input_boolean.temporary_boost_active
+        action: input_boolean.turn_on
+      - target:
+          entity_id: input_boolean.temporary_boost_direction_lock
+        action: input_boolean.turn_on
+      - target:
+          entity_id: timer.temporary_comfort_timer
+        action: timer.start
+    - conditions:
+      - condition: template
+        value_template: '{{ mode == ''heat'' }}'
+      sequence:
+      - target:
+          entity_id: input_boolean.temporary_boost_active
+        action: input_boolean.turn_on
+      - target:
+          entity_id: input_boolean.temporary_boost_direction_lock
+        action: input_boolean.turn_on
+      - target:
+          entity_id: timer.temporary_comfort_timer
+        action: timer.start
+temporary_comfort_reset:
+  alias: Temporary Comfort Reset
+  mode: single
+  sequence:
+  - variables:
+      mode: '{{ states(''climate.thermostat'') }}'
+      orig_low: '{{ states(''input_number.original_low_temp'') | float }}'
+      orig_high: '{{ states(''input_number.original_high_temp'') | float }}'
+      orig_single: '{{ states(''input_number.original_single_temp'') | float }}'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ mode == ''heat_cool'' }}'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          target_temp_low: '{{ orig_low }}'
+          target_temp_high: '{{ orig_high }}'
+        action: climate.set_temperature
+    - conditions:
+      - condition: template
+        value_template: '{{ mode == ''heat'' }}'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ orig_single }}'
+        action: climate.set_temperature
+    - conditions:
+      - condition: template
+        value_template: '{{ mode == ''cool'' }}'
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: '{{ orig_single }}'
+        action: climate.set_temperature
+  - target:
+      entity_id: input_boolean.temporary_boost_active
+    action: input_boolean.turn_off
+  - target:
+      entity_id: input_boolean.temporary_boost_direction_lock
+    action: input_boolean.turn_off
   - target:
       entity_id: timer.temporary_comfort_timer
     action: timer.cancel
@@ -123,27 +220,4 @@ temporary_comfort_reset:
       entity_id: input_text.current_active_automation
     data:
       value: ''
-    action: input_text.set_value
-  - target:
-      entity_id: input_boolean.temporary_boost_direction_lock
-    action: input_boolean.turn_off
-  - target:
-      entity_id: input_number.temporary_comfort_original_temp
-    data:
-      value: 0
-    action: input_number.set_value
-  - target:
-      entity_id: input_number.last_raise_press
-    data:
-      value: 0
-    action: input_number.set_value
-  - target:
-      entity_id: input_number.last_lower_press
-    data:
-      value: 0
-    action: input_number.set_value
-  - target:
-      entity_id: input_text.temporary_boost_reset_log
-    data:
-      value: Temporary Boost Reset — {{ now().isoformat() }}
     action: input_text.set_value

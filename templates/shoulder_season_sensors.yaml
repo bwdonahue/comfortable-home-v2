@@ -8,14 +8,14 @@
     # --------------------------------------------------------
     # CURRENT SHOULDER SEASON MODE (TEXT)
     # --------------------------------------------------------
-    - name: shoulder_season_current_log
+    - name: shoulder_season_current_mode
       state: >
-        {% set boost = is_state('input_boolean.boost_mode', 'on') %}
-        {% set spring = is_state('input_boolean.spring_shoulder_active', 'on') %}
-        {% set fall = is_state('input_boolean.fall_shoulder_active', 'on') %}
+        {% set boost = is_state('input_boolean.temporary_boost_active', 'on') %}
+        {% set spring = is_state('input_select.current_season', 'Spring') %}
+        {% set fall = is_state('input_select.current_season', 'Fall') %}
 
         {% if boost %}
-          BOOST ACTIVE — {{ now().strftime('%b %d, %Y %H:%M') }}
+        BOOST ACTIVE
 
         {% elif spring %}
           {% set logs = [
@@ -23,7 +23,14 @@
             states('input_text.spring_shoulder_cool_day_log'),
             states('input_text.spring_shoulder_baseline_log')
           ] %}
-          {{ logs | select('string') | reject('equalto','') | list | sort | last }}
+          {{ logs
+              | reject('equalto','')
+              | reject('equalto','unknown')
+              | map('regex_replace', ' — .*', '')
+              | list
+              | first
+              | default('INACTIVE')
+          }}
 
         {% elif fall %}
           {% set logs = [
@@ -31,7 +38,14 @@
             states('input_text.fall_shoulder_cool_day_log'),
             states('input_text.fall_shoulder_baseline_log')
           ] %}
-          {{ logs | select('string') | reject('equalto','') | list | sort | last }}
+          {{ logs
+              | reject('equalto','')
+              | reject('equalto','unknown')
+              | map('regex_replace', ' — .*', '')
+              | list
+              | first
+              | default('INACTIVE')
+          }}
 
         {% else %}
           INACTIVE
@@ -42,7 +56,7 @@
     # --------------------------------------------------------
     - name: shoulder_season_mode_color
       state: >
-        {% set raw = states('sensor.shoulder_season_current_log') %}
+        {% set raw = states('sensor.shoulder_season_current_mode') %}
 
         {% if 'BOOST' in raw %}
           purple
