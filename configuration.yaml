@@ -44,7 +44,7 @@ rest_command:
     url: !secret notion_webhook_url
     method: POST
     headers:
-      content-type: "application/json"
+      Content-Type: "application/json"
     payload: >
       {{ payload }}
 
@@ -72,7 +72,34 @@ rest_command:
     payload: >
       api_key={{ states('input_text.uptimerobot_api_key_holder') }}&id=802207036&status=1
 
-input_text:
-  uptimerobot_api_key_holder:
-    name: UptimeRobot API Key Holder
-    max: 100
+  milo_dev_event:
+    url: "http://192.168.0.18:5001/ha/event"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    payload: >
+      {
+        "entity": "{{ entity }}",
+        "old": "{{ old }}",
+        "new": "{{ new }}"
+      }
+
+  milo_prod_event:
+    url: "http://192.168.0.17:5001/ha/event"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    payload: >
+      {
+        "entity": "{{ entity }}",
+        "old": "{{ old }}",
+        "new": "{{ new }}"
+      }
+
+input_select:
+  milo_target:
+    name: Milo Target Environment
+    options:
+      - dev
+      - prod
+    initial: dev

@@ -2324,3 +2324,31 @@
         \"{{ states('input_text.temporary_boost_cool_log') }}\",\n  \"friendly_name\":
         \"Temporary Boost Cool Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
   mode: single
+- id: '1775356663931'
+  alias: Shoulder Season Mode → Milo
+  description: Send shoulder season mode changes to Milo (Dev/Prod aware)
+  triggers:
+  - entity_id: sensor.shoulder_season_current_mode
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ is_state(''input_select.milo_target'', ''dev'') }}'
+      sequence:
+      - action: rest_command.milo_dev_event
+        data:
+          entity: '{{ trigger.entity_id }}'
+          old: '{{ trigger.from_state.state }}'
+          new: '{{ trigger.to_state.state }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ is_state(''input_select.milo_target'', ''prod'') }}'
+      sequence:
+      - action: rest_command.milo_prod_event
+        data:
+          entity: '{{ trigger.entity_id }}'
+          old: '{{ trigger.from_state.state }}'
+          new: '{{ trigger.to_state.state }}'
+  mode: single
