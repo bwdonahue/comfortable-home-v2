@@ -860,6 +860,12 @@
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    above: 55
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    below: 75
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -896,6 +902,12 @@
   - condition: state
     entity_id: input_boolean.temporary_boost_active
     state: 'off'
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    above: 55
+  - condition: numeric_state
+    entity_id: sensor.st_00196977_temperature
+    below: 75
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1343,7 +1355,7 @@
   - action: notify.the_donahue_soto_house
     data:
       message: ⏸️ UptimeRobot monitoring paused for the Monday patch window.
-      target: '#comfortable-home-feed'
+      target: '#project-home-assistant'
   mode: single
 - id: '1771170653160'
   alias: Resume UptimeRobot Monitoring
@@ -1360,7 +1372,7 @@
   - action: notify.the_donahue_soto_house
     data:
       message: ▶️ UptimeRobot monitoring resumed after the Monday patch window.
-      target: '#comfortable-home-feed'
+      target: '#project-home-assistant'
   mode: single
 - id: '1771994049128'
   alias: Spring Pre-Season Email (Reminder)
