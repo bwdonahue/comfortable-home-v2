@@ -13,31 +13,20 @@ template: !include_dir_merge_list templates/
 recorder:
   purge_keep_days: 30
   auto_purge: true
-notify:
-  - name: sendgrid
-    platform: sendgrid
-    api_key: !secret sendgrid_api_key
-    sender: homeassistant@realdeep.net
-    recipient: bryandonahue@gmail.com
 
 rest_command:
-  sendgrid_html:
-    url: "https://api.sendgrid.com/v3/mail/send"
+  resend_email:
+    url: "https://api.resend.com/emails"
     method: POST
     headers:
-      Authorization: !secret sendgrid_bearer
+      Authorization: !secret resend_api_key_header
       Content-Type: "application/json"
     payload: >
       {
-        "personalizations": [{
-          "to": [{"email": "bryandonahue@gmail.com"}]
-        }],
-        "from": {"email": "homeassistant@realdeep.net"},
+        "from": "homeassistant@realdeep.net",
+        "to": ["{{ recipient }}"],
         "subject": "{{ subject }}",
-        "content": [{
-          "type": "text/html",
-          "value": "{{ body }}"
-        }]
+        "html": {{ html | tojson }}
       }
 
   log_to_notion:
@@ -55,22 +44,6 @@ rest_command:
       Content-Type: "application/json"
     payload: >
       {{ payload }}
-
-  uptimerobot_pause:
-    url: "https://api.uptimerobot.com/v2/editMonitor"
-    method: POST
-    headers:
-      Content-Type: "application/x-www-form-urlencoded"
-    payload: >
-      api_key={{ states('input_text.uptimerobot_api_key_holder') }}&id=802207036&status=0
-
-  uptimerobot_resume:
-    url: "https://api.uptimerobot.com/v2/editMonitor"
-    method: POST
-    headers:
-      Content-Type: "application/x-www-form-urlencoded"
-    payload: >
-      api_key={{ states('input_text.uptimerobot_api_key_holder') }}&id=802207036&status=1
 
   milo_dev_event:
     url: "http://192.168.0.18:5001/ha/event"
@@ -95,6 +68,17 @@ rest_command:
         "old": "{{ old }}",
         "new": "{{ new }}"
       }
+
+shell_command:
+  uptimerobot_pause: >
+    curl -X POST https://api.uptimerobot.com/v2/editMonitor
+    -H "Content-Type: application/x-www-form-urlencoded"
+    --data "api_key={{ states('input_text.uptimerobot_api_key') }}&id=802207036&status=0"
+
+  uptimerobot_resume: >
+    curl -X POST https://api.uptimerobot.com/v2/editMonitor
+    -H "Content-Type: application/x-www-form-urlencoded"
+    --data "api_key={{ states('input_text.uptimerobot_api_key') }}&id=802207036&status=1"
 
 input_select:
   milo_target:

@@ -24,6 +24,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -70,6 +73,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -117,6 +123,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month in [11, 12, 1, 2, 3] }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -225,6 +234,9 @@
     value_template: "{{ state_attr('automation.winter_sunny_heating','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_sunny_heating','last_triggered')))
       > 1800 }}\n"
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_temperature
     target:
@@ -274,6 +286,9 @@
     value_template: "{{ state_attr('automation.winter_cloudy_heating','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.winter_cloudy_heating','last_triggered')))
       > 1800 }}\n"
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_temperature
     target:
@@ -308,6 +323,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month == 11 and now().day == 1 }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - target:
       entity_id: input_select.current_season
@@ -338,6 +356,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month == 4 and now().day == 1 }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: input_select.select_option
     target:
@@ -391,6 +412,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month == 9 and now().day == 1 }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: input_select.select_option
     target:
@@ -444,6 +468,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month == 6 and now().day == 1 }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - target:
       entity_id: input_select.current_season
@@ -476,6 +503,9 @@
       1, 2, 3, 4] }}
 
       '
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -526,6 +556,9 @@
       6] }}
 
       '
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -573,6 +606,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month in [6, 7, 8] }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -620,6 +656,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month in [6, 7, 8] }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -666,6 +705,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month in [6, 7, 8] }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -713,6 +755,9 @@
   conditions:
   - condition: template
     value_template: '{{ now().month in [6, 7, 8] }}'
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -775,6 +820,9 @@
     value_template: "{{ state_attr('automation.summer_sunny_cooling','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_sunny_cooling','last_triggered')))
       > 1800 }}\n"
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_temperature
     target:
@@ -824,6 +872,9 @@
     value_template: "{{ state_attr('automation.summer_cloudy_cooling','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_cloudy_cooling','last_triggered')))
       > 1800 }}\n"
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_temperature
     target:
@@ -866,6 +917,9 @@
   - condition: numeric_state
     entity_id: sensor.st_00196977_temperature
     below: 75
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -908,6 +962,9 @@
   - condition: numeric_state
     entity_id: sensor.st_00196977_temperature
     below: 75
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -955,6 +1012,9 @@
     value_template: "{{\n  state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')))
       > 1800\n}}\n"
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1002,6 +1062,9 @@
     value_template: "{{\n  state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')))
       > 1800\n}}\n"
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1049,6 +1112,9 @@
     value_template: "{{\n  state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_heating_nudge_cool_shoulder_days','last_triggered')))
       > 1800\n}}\n"
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1096,6 +1162,9 @@
     value_template: "{{\n  state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_heating_nudge_cool_shoulder_days','last_triggered')))
       > 1800\n}}\n"
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1127,6 +1196,10 @@
     event_data:
       entity_id: timer.temporary_comfort_timer
     trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state: 'off'
   actions:
   - action: script.temporary_comfort_reset
   mode: single
@@ -1149,17 +1222,18 @@
   alias: Send Fall Shoulder Email
   description: Send Fall Shoulder HTML email
   triggers:
-  - entity_id: input_button.preview_fall_shoulder_email
-    trigger: state
+  - trigger: state
+    entity_id: input_button.preview_fall_shoulder_email
   actions:
-  - action: rest_command.sendgrid_html
+  - action: rest_command.resend_email
     data:
+      recipient: bryandonahue@gmail.com
       subject: Fall Shoulder Season Activated
-      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-        20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
-        \   <p>\n      Nest has switched into <b>AUTO mode</b> for the fall shoulder
-        season.\n    </p>\n\n    <p>\n      This allows the system to automatically
-        decide whether to heat or cool based on indoor conditions.\n    </p>\n\n    <p><b>Shoulder
+      html: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+        20px; line-height: 1.5; max-width: 600px;'>\n    <p>Hi Bryan,</p>\n\n    <p>\n
+        \     Nest has switched into <b>AUTO mode</b> for the fall shoulder season.\n
+        \   </p>\n\n    <p>\n      This allows the system to automatically decide
+        whether to heat or cool based on indoor conditions.\n    </p>\n\n    <p><b>Shoulder
         season checklist:</b></p>\n\n    <ul>\n      <li>Uncover AC unit in backyard
         (system may cool on warm days)</li>\n      <li>Adjust vents to neutral or
         balanced flow</li>\n      <li>Keep whole-house humidifier OFF</li>\n      <li>\n
@@ -1179,13 +1253,14 @@
   alias: Send Spring Shoulder Email
   description: Send Spring Shoulder HTML email
   triggers:
-  - entity_id: input_button.preview_spring_shoulder_email
-    trigger: state
+  - trigger: state
+    entity_id: input_button.preview_spring_shoulder_email
   actions:
-  - action: rest_command.sendgrid_html
+  - action: rest_command.resend_email
     data:
+      recipient: bryandonahue@gmail.com
       subject: Spring Shoulder Season Activated
-      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+      html: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
         20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
         \   <p>\n      Nest has switched into <b>AUTO mode</b> for the spring shoulder
         season.\n    </p>\n\n    <p>\n      This allows the system to automatically
@@ -1204,18 +1279,19 @@
     data:
       message: "\U0001F324️ Spring Shoulder Season activated."
       target: '#comfortable-home-feed'
-  mode: restart
+  mode: single
 - id: '1769841892716'
   alias: Send Summer Email
   description: Send Summer Mode HTML email
   triggers:
-  - entity_id: input_button.preview_summer_email
-    trigger: state
+  - trigger: state
+    entity_id: input_button.preview_summer_email
   actions:
-  - action: rest_command.sendgrid_html
+  - action: rest_command.resend_email
     data:
+      recipient: bryandonahue@gmail.com
       subject: Summer Mode Activated
-      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+      html: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
         20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
         \   <p>\n      Nest is now in <b>COOL mode</b>.\n    </p>\n\n    <p>\n      The
         system will only run the AC when temperatures rise above your set points.\n
@@ -1238,13 +1314,14 @@
   alias: Send Winter Email
   description: Send Winter Mode HTML email
   triggers:
-  - entity_id: input_button.preview_winter_email
-    trigger: state
+  - trigger: state
+    entity_id: input_button.preview_winter_email
   actions:
-  - action: rest_command.sendgrid_html
+  - action: rest_command.resend_email
     data:
+      recipient: bryandonahue@gmail.com
       subject: Winter Mode Activated
-      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
+      html: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
         20px; line-height: 1.5; max-width: 600px;'>\n    \n    <p>Hi Bryan,</p>\n\n
         \   <p>\n      Nest is now in <b>HEAT mode</b>.\n    </p>\n\n    <p>\n      The
         system will only run the furnace when temperatures drop below your set points.\n
@@ -1344,99 +1421,74 @@
   alias: Pause UptimeRobot Monitoring
   description: Pauses UptimeRobot before the Monday patch window
   triggers:
-  - at: 03:55:00
-    trigger: time
+  - trigger: time
+    at: 03:55:00
   conditions:
   - condition: time
     weekday:
     - mon
   actions:
-  - action: rest_command.uptimerobot_pause
-  - action: notify.the_donahue_soto_house
-    data:
-      message: ⏸️ UptimeRobot monitoring paused for the Monday patch window.
-      target: '#project-home-assistant'
+  - action: shell_command.uptimerobot_pause
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.uptimerobot_monitoring
   mode: single
 - id: '1771170653160'
   alias: Resume UptimeRobot Monitoring
   description: Resumes UptimeRobot after the Monday patch window
   triggers:
-  - at: 05:30:00
-    trigger: time
+  - trigger: time
+    at: 05:30:00
   conditions:
   - condition: time
     weekday:
     - mon
   actions:
-  - action: rest_command.uptimerobot_resume
-  - action: notify.the_donahue_soto_house
-    data:
-      message: ▶️ UptimeRobot monitoring resumed after the Monday patch window.
-      target: '#project-home-assistant'
+  - action: shell_command.uptimerobot_resume
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.uptimerobot_monitoring
   mode: single
 - id: '1771994049128'
   alias: Spring Pre-Season Email (Reminder)
   description: Sends Spring reminder email a few days before season activation
   triggers:
-  - at: 09:00:00
-    trigger: time
+  - trigger: time
+    at: 09:00:00
   conditions:
   - condition: template
     value_template: '{{ now().month == 3 and now().day == 29 }}'
   actions:
-  - action: rest_command.sendgrid_html
+  - action: rest_command.resend_email
     data:
+      recipient: bryandonahue@gmail.com
       subject: Spring Shoulder Season Coming Soon
-      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-        20px; line-height: 1.5; max-width: 600px;'>\n    <p>Hi Bryan,</p>\n    <p>\n
-        \     Spring shoulder season begins soon. Nest will switch into <b>AUTO mode</b>
-        on April 1.\n    </p>\n    <p>\n      This allows the system to automatically
-        decide whether to heat or cool as temperatures warm up.\n    </p>\n    <p><b>Spring
-        shoulder season checklist:</b></p>\n    <ul>\n      <li>Uncover AC unit in
-        backyard</li>\n      <li>Adjust vents to neutral or balanced flow</li>\n      <li>Keep
-        whole-house humidifier OFF</li>\n      <li>\n        Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
-        login</a>)\n      </li>\n      <li>\n        Optional: schedule AC tune-up
-        or duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
-        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n    <p>\n      This ensures
-        both heating and cooling are available as the weather transitions into warmer
-        months.\n    </p>\n  </body>\n</html>\n"
+      html: <p>Spring shoulder season begins soon. Nest will switch into AUTO mode
+        on April 1.</p>
   - action: notify.the_donahue_soto_house
     data:
-      message: "\U0001F331 The house is preparing for spring."
+      message: "\U0001F331 Spring reminder email sent."
       target: '#comfortable-home-feed'
   mode: single
 - id: '1771994259227'
   alias: Fall Pre-Season Email (Reminder)
   description: Sends Fall reminder email a few days before season activation
   triggers:
-  - at: 09:00:00
-    trigger: time
+  - trigger: time
+    at: 09:00:00
   conditions:
   - condition: template
     value_template: '{{ now().month == 8 and now().day == 29 }}'
   actions:
-  - action: rest_command.sendgrid_html
+  - action: rest_command.resend_email
     data:
+      recipient: bryandonahue@gmail.com
       subject: Fall Shoulder Season Coming Soon
-      body: "<html>\n  <body style='font-family: Arial, sans-serif; color: #333; padding:
-        20px; line-height: 1.5; max-width: 600px;'>\n    <p>Hi Bryan,</p>\n    <p>\n
-        \     Fall shoulder season begins soon. Nest will switch into <b>AUTO mode</b>
-        on September 1.\n    </p>\n    <p>\n      This allows the system to automatically
-        decide whether to heat or cool based on indoor conditions.\n    </p>\n    <p><b>Shoulder
-        season checklist:</b></p>\n    <ul>\n      <li>Uncover AC unit in backyard
-        (system may cool on warm days)</li>\n      <li>Adjust vents to neutral or
-        balanced flow</li>\n      <li>Keep whole-house humidifier OFF</li>\n      <li>\n
-        \       Check filter (<a href=\"https://www.secondnature.com/login\">FilterEasy
-        login</a>)\n      </li>\n      <li>\n        Optional: schedule tune-up or
-        duct cleaning<br>\n        &nbsp;&nbsp;• <a href=\"https://www.perfecthomeservices.com/\">Book
-        Perfect Home Services</a><br>\n        &nbsp;&nbsp;• <a href=\"https://www.mrductcleaning.com/\">Schedule
-        Mr. Duct Cleaning</a>\n      </li>\n    </ul>\n    <p>\n      This ensures
-        both heating and cooling are available as the weather shifts.\n    </p>\n
-        \ </body>\n</html>\n"
+      html: <p>Fall shoulder season begins soon. Nest will switch into AUTO mode on
+        September 1.</p>
   - action: notify.the_donahue_soto_house
     data:
-      message: "\U0001F341 The house is preparing for fall."
+      message: "\U0001F341 Fall reminder email sent."
       target: '#comfortable-home-feed'
   mode: single
 - id: '1772316486064'
@@ -2336,31 +2388,339 @@
         \"{{ states('input_text.temporary_boost_cool_log') }}\",\n  \"friendly_name\":
         \"Temporary Boost Cool Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
   mode: single
-- id: '1775356663931'
-  alias: Shoulder Season Mode → Milo
-  description: Send shoulder season mode changes to Milo (Dev/Prod aware)
+- id: '1776221000813'
+  alias: Enable Maintenance Mode When Nest Is Turned Off
+  description: ''
   triggers:
-  - entity_id: sensor.shoulder_season_current_mode
+  - entity_id: climate.thermostat
+    to: 'off'
+    trigger: state
+  actions:
+  - target:
+      entity_id: input_boolean.maintenance_mode
+    action: input_boolean.turn_on
+  - target:
+      entity_id: input_text.maintenance_log
+    data:
+      value: 'MAINTENANCE MODE ENABLED (Nest turned off) — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
+
+        '
+    action: input_text.set_value
+- id: '1776221067400'
+  alias: Maintenance Mode Enabled - Store Mode And Turn Off Nest
+  description: ''
+  triggers:
+  - entity_id: input_boolean.maintenance_mode
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.maintenance_mode_manual
+    state: 'off'
+  actions:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.previous_hvac_mode
+    data:
+      value: '{{ states(''climate.thermostat'') }}'
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: 'off'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.maintenance_log
+    data:
+      value: 'MAINTENANCE MODE ENABLED (HA turned Nest off) — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
+
+        '
+- id: '1776221117731'
+  alias: Disable Maintenance Mode When Nest Is Turned On
+  description: ''
+  triggers:
+  - entity_id: climate.thermostat
+    from: 'off'
+    to:
+    - heat
+    - cool
+    - heat_cool
+    trigger: state
+  actions:
+  - target:
+      entity_id: input_boolean.maintenance_mode
+    action: input_boolean.turn_off
+  - target:
+      entity_id: input_text.maintenance_log
+    data:
+      value: 'MAINTENANCE MODE DISABLED (Nest turned on) — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
+
+        '
+    action: input_text.set_value
+- id: '1776221152417'
+  alias: Maintenance Mode Disabled - Restore Previous Mode
+  description: ''
+  triggers:
+  - entity_id: input_boolean.maintenance_mode
+    to: 'off'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.maintenance_mode_manual
+    state: 'off'
+  actions:
+  - action: climate.set_hvac_mode
+    target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: '{{ states(''input_text.previous_hvac_mode'') }}'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.maintenance_log
+    data:
+      value: 'MAINTENANCE MODE DISABLED (Nest restored to previous mode) — {{ now().strftime(''%b
+        %d, %Y %I:%M %p'') }}
+
+        '
+- id: '1776297587893'
+  alias: Manual Maintenance Mode Control
+  description: Manual toggle for Maintenance Mode without touching the thermostat
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.maintenance_mode_manual
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.maintenance_mode_manual
+        state: 'on'
+      sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.maintenance_mode
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.maintenance_mode_manual
+        state: 'off'
+      sequence:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.maintenance_mode
+- id: '1776299845847'
+  alias: Milo – Backyard Sensors
+  description: Forward meaningful Backyard environmental + security events to Milo
+    (Dev/Prod aware)
+  triggers:
+  - entity_id:
+    - sensor.st_00196977_temperature
+    - sensor.st_00196977_humidity
+    - sensor.st_00196977_air_pressure
+    - sensor.st_00196977_wind_speed
+    - sensor.st_00196977_wind_speed_average
+    - sensor.st_00196977_wind_gust
+    - sensor.st_00196977_lightning_average_distance
+    - sensor.st_00196977_precipitation
+    - sensor.st_00196977_precipitation_intensity
+    - sensor.st_00196977_precipitation_type
+    - sensor.st_00196977_uv_index
+    - sensor.st_00196977_illuminance
+    trigger: state
+  - event_type: st_00196977_lightning_strike
+    trigger: event
+  - event_type: st_00196977_precipitation_start
+    trigger: event
+  - entity_id:
+    - binary_sensor.backyard_motion_detected
+    - binary_sensor.backyard_person_detected
+    - sensor.backyard_person_name
+    - binary_sensor.backyard_snooze
+    - sensor.backyard_snooze_time
+    - sensor.backyard_stream_status
+    - sensor.backyard_current_mode
+    - alarm_control_panel.backyard
     trigger: state
   conditions: []
   actions:
   - choose:
     - conditions:
-      - condition: template
-        value_template: '{{ is_state(''input_select.milo_target'', ''dev'') }}'
+      - condition: state
+        entity_id: input_select.milo_target
+        state: dev
       sequence:
-      - action: rest_command.milo_dev_event
-        data:
-          entity: '{{ trigger.entity_id }}'
-          old: '{{ trigger.from_state.state }}'
-          new: '{{ trigger.to_state.state }}'
+      - data:
+          entity: '{{ trigger.entity_id if trigger.entity_id is defined else trigger.event.event_type
+            }}'
+          old: '{{ trigger.from_state.state if trigger.from_state is defined else
+            '''' }}'
+          new: '{{ trigger.to_state.state if trigger.to_state is defined else ''''
+            }}'
+          event_type: '{{ trigger.event.event_type if trigger.event is defined else
+            ''state_changed'' }}'
+        action: rest_command.milo_dev_event
     - conditions:
-      - condition: template
-        value_template: '{{ is_state(''input_select.milo_target'', ''prod'') }}'
+      - condition: state
+        entity_id: input_select.milo_target
+        state: prod
       sequence:
-      - action: rest_command.milo_prod_event
-        data:
-          entity: '{{ trigger.entity_id }}'
-          old: '{{ trigger.from_state.state }}'
-          new: '{{ trigger.to_state.state }}'
+      - data:
+          entity: '{{ trigger.entity_id if trigger.entity_id is defined else trigger.event.event_type
+            }}'
+          old: '{{ trigger.from_state.state if trigger.from_state is defined else
+            '''' }}'
+          new: '{{ trigger.to_state.state if trigger.to_state is defined else ''''
+            }}'
+          event_type: '{{ trigger.event.event_type if trigger.event is defined else
+            ''state_changed'' }}'
+        action: rest_command.milo_prod_event
+  mode: parallel
+- id: '1776302572201'
+  alias: Milo – Sala Sensors
+  description: Forward meaningful Sala environmental, lighting, and connectivity events
+    to Milo (Dev/Prod aware)
+  triggers:
+  - entity_id:
+    - sensor.thermostat_temperature
+    - sensor.thermostat_humidity
+    - climate.thermostat
+    - sensor.sala_illuminance
+    trigger: state
+  - entity_id:
+    - light.fireplace_lights
+    - light.sala_light
+    - light.lamp_1
+    - light.lamp_2
+    - light.lamp_3
+    trigger: state
+  - entity_id:
+    - binary_sensor.sala_connectivity
+    - binary_sensor.sala_fire_tv_stick_connectivity
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.milo_target
+        state: dev
+      sequence:
+      - data:
+          entity: '{{ trigger.entity_id if trigger.entity_id is defined else trigger.event.event_type
+            }}'
+          old: '{{ trigger.from_state.state if trigger.from_state is defined else
+            '''' }}'
+          new: '{{ trigger.to_state.state if trigger.to_state is defined else ''''
+            }}'
+          event_type: '{{ trigger.event.event_type if trigger.event is defined else
+            ''state_changed'' }}'
+        action: rest_command.milo_dev_event
+    - conditions:
+      - condition: state
+        entity_id: input_select.milo_target
+        state: prod
+      sequence:
+      - data:
+          entity: '{{ trigger.entity_id if trigger.entity_id is defined else trigger.event.event_type
+            }}'
+          old: '{{ trigger.from_state.state if trigger.from_state is defined else
+            '''' }}'
+          new: '{{ trigger.to_state.state if trigger.to_state is defined else ''''
+            }}'
+          event_type: '{{ trigger.event.event_type if trigger.event is defined else
+            ''state_changed'' }}'
+        action: rest_command.milo_prod_event
+  mode: parallel
+- id: '1776558049985'
+  alias: Milo – Upstairs Sensors
+  description: Forward meaningful Upstairs environmental, presence, connectivity,
+    and security events to Milo (Dev/Prod aware)
+  triggers:
+  - entity_id:
+    - sensor.kids_room_temperature
+    - sensor.kids_room_humidity
+    - climate.kids_room
+    - sensor.upstairs_illuminance
+    - sensor.noah_s_room_illuminance
+    trigger: state
+  - entity_id:
+    - binary_sensor.kids_room_motion_detected
+    - binary_sensor.kids_room_person_detected
+    - binary_sensor.kids_room_pet_detected
+    - binary_sensor.kids_room_sound_detected
+    - binary_sensor.kids_room_crying_detected
+    trigger: state
+  - entity_id:
+    - binary_sensor.upstairs_connectivity
+    - binary_sensor.upstairs_firetv_stick_connectivity
+    - binary_sensor.kids_room_status
+    - binary_sensor.noah_s_room_connectivity
+    trigger: state
+  - entity_id:
+    - alarm_control_panel.kids_room
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.milo_target
+        state: dev
+      sequence:
+      - data:
+          entity: '{{ trigger.entity_id if trigger.entity_id is defined else trigger.event.event_type
+            }}'
+          old: '{{ trigger.from_state.state if trigger.from_state is defined else
+            '''' }}'
+          new: '{{ trigger.to_state.state if trigger.to_state is defined else ''''
+            }}'
+          event_type: '{{ trigger.event.event_type if trigger.event is defined else
+            ''state_changed'' }}'
+        action: rest_command.milo_dev_event
+    - conditions:
+      - condition: state
+        entity_id: input_select.milo_target
+        state: prod
+      sequence:
+      - data:
+          entity: '{{ trigger.entity_id if trigger.entity_id is defined else trigger.event.event_type
+            }}'
+          old: '{{ trigger.from_state.state if trigger.from_state is defined else
+            '''' }}'
+          new: '{{ trigger.to_state.state if trigger.to_state is defined else ''''
+            }}'
+          event_type: '{{ trigger.event.event_type if trigger.event is defined else
+            ''state_changed'' }}'
+        action: rest_command.milo_prod_event
+  mode: parallel
+- id: '1777169681672'
+  alias: UptimeRobot Pause via Dashboard
+  description: Pauses UptimeRobot when the dashboard switch is turned off
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.uptimerobot_monitoring
+    to: 'off'
+  conditions: []
+  actions:
+  - action: shell_command.uptimerobot_pause
+  - action: notify.the_donahue_soto_house
+    data:
+      message: ⏸️ UptimeRobot monitoring paused.
+      target: '#project-home-assistant'
+  mode: single
+- id: '1777169707266'
+  alias: UptimeRobot Resume via Dashboard
+  description: Resumes UptimeRobot when the dashboard switch is turned on
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.uptimerobot_monitoring
+    to: 'on'
+  conditions: []
+  actions:
+  - action: shell_command.uptimerobot_resume
+  - action: notify.the_donahue_soto_house
+    data:
+      message: ▶️ UptimeRobot monitoring resumed.
+      target: '#project-home-assistant'
   mode: single
