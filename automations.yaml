@@ -916,7 +916,7 @@
     above: 55
   - condition: numeric_state
     entity_id: sensor.st_00196977_temperature
-    below: 75
+    below: 70
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
@@ -961,7 +961,7 @@
     above: 55
   - condition: numeric_state
     entity_id: sensor.st_00196977_temperature
-    below: 75
+    below: 70
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
@@ -995,8 +995,9 @@
     exceeds threshold
   triggers:
   - trigger: numeric_state
-    entity_id: sensor.st_00196977_temperature
-    above: 75
+    entity_id:
+    - sensor.st_00196977_temperature
+    above: 70
   - trigger: time_pattern
     minutes: /30
   conditions:
@@ -1007,7 +1008,7 @@
     state: 'off'
   - condition: numeric_state
     entity_id: sensor.st_00196977_temperature
-    above: 75
+    above: 70
   - condition: template
     value_template: "{{\n  state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.spring_cooling_nudge_warm_shoulder_days','last_triggered')))
@@ -1045,8 +1046,9 @@
     threshold
   triggers:
   - trigger: numeric_state
-    entity_id: sensor.st_00196977_temperature
-    above: 75
+    entity_id:
+    - sensor.st_00196977_temperature
+    above: 70
   - trigger: time_pattern
     minutes: /30
   conditions:
@@ -1057,7 +1059,7 @@
     state: 'off'
   - condition: numeric_state
     entity_id: sensor.st_00196977_temperature
-    above: 75
+    above: 70
   - condition: template
     value_template: "{{\n  state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')
       is none\n  or (as_timestamp(now()) - as_timestamp(state_attr('automation.fall_cooling_nudge_warm_shoulder_days','last_triggered')))
