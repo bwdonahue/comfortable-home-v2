@@ -800,8 +800,9 @@
   description: Cool to 72°F when summer sun is strong
   triggers:
   - trigger: numeric_state
-    entity_id: sensor.st_00196977_illuminance
-    above: 350
+    entity_id:
+    - sensor.st_00196977_irradiance
+    above: 250
   - trigger: time_pattern
     minutes: /5
   conditions:
@@ -814,8 +815,8 @@
     after: '10:00:00'
     before: '20:00:00'
   - condition: numeric_state
-    entity_id: sensor.st_00196977_illuminance
-    above: 350
+    entity_id: sensor.st_00196977_irradiance
+    above: 250
   - condition: template
     value_template: "{{ state_attr('automation.summer_sunny_cooling','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_sunny_cooling','last_triggered')))
@@ -852,8 +853,9 @@
   description: Cool to 74°F on cloudy summer days
   triggers:
   - trigger: numeric_state
-    entity_id: sensor.st_00196977_illuminance
-    below: 200
+    entity_id:
+    - sensor.st_00196977_irradiance
+    below: 150
   - trigger: time_pattern
     minutes: /5
   conditions:
@@ -866,8 +868,8 @@
     after: '10:00:00'
     before: '20:00:00'
   - condition: numeric_state
-    entity_id: sensor.st_00196977_illuminance
-    below: 200
+    entity_id: sensor.st_00196977_irradiance
+    below: 150
   - condition: template
     value_template: "{{ state_attr('automation.summer_cloudy_cooling','last_triggered')
       is none\n   or (as_timestamp(now()) - as_timestamp(state_attr('automation.summer_cloudy_cooling','last_triggered')))
