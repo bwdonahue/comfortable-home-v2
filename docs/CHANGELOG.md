@@ -3,6 +3,38 @@
 All notable changes to **Comfortable Home v2** are documented here.  
 This project follows a simple, milestone-based versioning style.
 
+## 2.6 — Maintenance Mode System + Slack/HA Notifications (2026‑07‑14)
+
+### Added
+- Introduced full Maintenance Mode subsystem for safe HVAC shutdowns during cleaning, repairs, or brownouts.
+- Added new helpers:
+  - `input_boolean.maintenance_mode`
+  - `input_boolean.maintenance_mode_manual`
+  - `input_text.previous_hvac_mode`
+  - `input_text.maintenance_log`
+- Added five dedicated automations:
+  - **Enable Maintenance Mode When Nest Is Turned Off** — activates Maintenance Mode when Nest reports `off` or `unavailable`.
+  - **Disable Maintenance Mode When Nest Is Turned On** — deactivates Maintenance Mode when Nest resumes heating/cooling.
+  - **Maintenance Mode Enabled — Store Mode & Turn Off Nest** — captures previous HVAC mode and safely powers down the thermostat.
+  - **Maintenance Mode Disabled — Restore Previous Mode** — restores the exact HVAC mode used before Maintenance Mode was activated.
+  - **Manual Maintenance Mode Control** — allows manual toggling without touching the thermostat.
+- Added Slack webhook notifications (`rest_command.slack_webhook_prod`) for:
+  - Maintenance Mode enabled
+  - Maintenance Mode disabled
+  - Manual toggles
+- Added Home Assistant persistent notifications for visibility inside the HA UI.
+
+### Improved
+- Added guardrails to prevent invalid HVAC mode restores, toggle loops, and brownout‑related misfires.
+- Added timing delays to ensure Nest is ready before receiving restore commands.
+- Standardized logging format in `input_text.maintenance_log` for consistent timestamping and readability.
+
+### Notes
+This release introduces a fully self‑contained Maintenance Mode engine designed for reliability, safety, and transparency.  
+All actions are logged, all transitions are visible, and the system now includes multi‑channel notifications for complete operational awareness.  
+This subsystem lays the groundwork for future enhancements such as dashboard banners, restart‑blocked warnings, and maintenance analytics.
+
+
 ## v1.0 — Notion Logging + Seasonal Architecture Overhaul (2026-03-04)
 
 - Added unified seasonal activation automations (Spring, Summer, Fall, Winter)
