@@ -87,3 +87,5 @@ input_select:
       - dev
       - prod
     initial: dev
+
+milo_security: !include milo_security.yaml

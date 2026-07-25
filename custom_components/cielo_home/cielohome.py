@@ -33,6 +33,11 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 TIMEOUT_RECONNECT = 10
+# Exponential backoff bounds for repeated websocket-connect failures. The
+# WSS endpoint rate-limits (HTTP 429) on rapid reconnects from the same IP;
+# without backoff the integration reconnect-storms and the throttle never
+# clears. Backoff grows 10s -> 20s -> 40s ... capped at 5 min.
+RECONNECT_BACKOFF_MAX = 300
 TIME_REFRESH_TOKEN = 3300
 TIMER_PING = 540
 TIMER_PONG = 60
@@ -47,6 +52,9 @@ class CieloHome:
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Set up Cielo Home api."""
         self.can_reload: bool = True
+        # Snapshot of entry.data so update_listener can tell a genuine
+        # config change from our own token-rotation writes.
+        self.last_entry_data: dict = dict(entry.data) if entry is not None else {}
         self._is_running: bool = True
         self._stop_running: bool = False
         self._access_token: str = ""
@@ -70,6 +78,7 @@ class CieloHome:
         self._last_connection_ts: int = 0
         self._last_x_api_key: str = None
         self._reconnect_now = False
+        self._reconnect_attempts: int = 0
         self.hass: HomeAssistant = hass
         self._entry: ConfigEntry = entry
         self._appliance_id = None
@@ -111,12 +120,14 @@ class CieloHome:
         self._last_refresh_token_ts = self.get_ts()
         self._token_expire_in_ts = self.get_ts() + TIME_REFRESH_TOKEN
 
-        await self.async_refresh_token(test=True)
+        authenticated = await self.async_refresh_token(test=True)
 
-        if self._access_token != "":
+        # Only open the websocket when the token is actually valid; starting it
+        # with a dead token just produces a wss 403 (see issue #109).
+        if authenticated and self._access_token != "":
             self.create_websocket_log_exception(False)
 
-        return True
+        return authenticated
 
     async def async_refresh_token(
         self,
@@ -155,18 +166,25 @@ class CieloHome:
                 self._user_id = user_id
                 self._last_x_api_key = x_api_key
 
-            headers: dict[str, str] = self._headers
-            headers["authorization"] = self._access_token
-            headers["x-api-key"] = self._last_x_api_key
+            # The legacy /web/token/refresh endpoint now returns 403
+            # ForbiddenException at the CloudFront edge for every caller
+            # (valid tokens included). The current mobile app refreshes via
+            # /user/token/refresh using the iOS app key, so we use that here.
+            headers: dict[str, str] = {
+                "accept": "*/*",
+                "content-type": "application/json",
+                "x-api-key": IOS_X_API_KEY,
+                "user-agent": IOS_USER_AGENT,
+                "authorization": self._access_token,
+            }
 
             data = {
-                "local": "en",
                 "refreshToken": self._refresh_token,
             }
             async with ClientSession() as session:  # noqa: SIM117
                 async with session.post(
-                    "https://" + URL_API + "/web/token/refresh",
-                    headers=self._headers,
+                    "https://" + URL_API + "/user/token/refresh",
+                    headers=headers,
                     json=data,
                 ) as response:
                     if response.status == 200:
@@ -308,6 +326,9 @@ class CieloHome:
 
                     _LOGGER.info("Connected success")
                     self._last_connection_ts = self.get_ts()
+                    # A genuine handshake succeeded — clear the backoff so the
+                    # next transient drop reconnects promptly.
+                    self._reconnect_attempts = 0
                     self.stop_timer_connection_lost()
 
                     if update_state:
@@ -424,10 +445,21 @@ class CieloHome:
             #    listener.lost_connection()
             self.start_timer_connection_lost()
             if not self._reconnect_now:
-                _LOGGER.debug(
-                    "Try reconnection in " + str(TIMEOUT_RECONNECT) + " secondes"
+                # Connection failed to establish (or dropped immediately) —
+                # back off exponentially so repeated handshake rejections
+                # (e.g. HTTP 429 rate-limits) don't turn into a reconnect
+                # storm that keeps the endpoint throttled.
+                self._reconnect_attempts += 1
+                delay = min(
+                    TIMEOUT_RECONNECT * (2 ** (self._reconnect_attempts - 1)),
+                    RECONNECT_BACKOFF_MAX,
                 )
-                await asyncio.sleep(TIMEOUT_RECONNECT)
+                _LOGGER.debug(
+                    "Try reconnection in %s seconds (attempt %s)",
+                    delay,
+                    self._reconnect_attempts,
+                )
+                await asyncio.sleep(delay)
             else:
                 _LOGGER.debug("Reconnection")
             self._last_ts_ping = 0

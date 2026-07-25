@@ -8,6 +8,7 @@ from types import MappingProxyType, MethodType  # noqa: F401
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .cielohome import CieloHome
 from .cielohomedevice import CieloHomeDevice
@@ -43,7 +44,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.data["user_id"],
         entry.data["x_api_key"],
     ):
-        _LOGGER.error("Failed to login to Cielo Home")
+        # Stored token could not be refreshed (expired/revoked). Trigger the
+        # re-auth flow so the user can log in again instead of silently ending
+        # up with all entities unavailable (see issue #109).
+        raise ConfigEntryAuthFailed(
+            "Cielo Home token refresh failed; please re-authenticate"
+        )
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = api
@@ -86,11 +92,31 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
+# Entry-data keys the integration rewrites itself during normal operation
+# (token rotation). Changes limited to these must NOT trigger a reload,
+# otherwise every ~hourly (or, on WSS failure, every reconnect) token
+# refresh reloads the whole integration -- destroying the connection and
+# any reconnect backoff, producing a reload storm that keeps the WSS
+# endpoint rate-limited (HTTP 429) and the devices permanently offline.
+_TOKEN_KEYS = frozenset({"access_token", "refresh_token", "session_id"})
+
+
 async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry):
-    """Handle options update."""
+    """Handle entry update; skip reloads caused by our own token writes."""
 
     api: CieloHome = hass.data[DOMAIN][config_entry.entry_id]
-    if api.can_reload:
+
+    # Detect whether anything other than the self-managed token fields
+    # changed. Only a genuine config/options change should reload.
+    changed = {
+        k
+        for k in set(config_entry.data) | set(api.last_entry_data)
+        if config_entry.data.get(k) != api.last_entry_data.get(k)
+    }
+    api.last_entry_data = dict(config_entry.data)
+    non_token_change = bool(changed - _TOKEN_KEYS)
+
+    if api.can_reload and non_token_change:
         _LOGGER.info("Reload integration")
         hass.config_entries.async_schedule_reload(config_entry.entry_id)
     else:

@@ -1,0 +1,13 @@
+allowed_domains:
+  - light
+
+denied_entities: []
+
+high_risk_domains:
+  - alarm_control_panel
+  - climate
+  - camera
+  - device_tracker
+  - notify
+  - update
+  - automation

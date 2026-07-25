@@ -27,6 +27,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -76,6 +80,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -126,6 +134,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -237,6 +249,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_temperature
     target:
@@ -289,6 +305,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_temperature
     target:
@@ -326,6 +346,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - target:
       entity_id: input_select.current_season
@@ -359,6 +383,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: input_select.select_option
     target:
@@ -415,6 +443,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: input_select.select_option
     target:
@@ -471,6 +503,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - target:
       entity_id: input_select.current_season
@@ -506,6 +542,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -559,6 +599,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -609,6 +653,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -659,6 +707,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -708,6 +760,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -758,6 +814,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -824,6 +884,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_temperature
     target:
@@ -877,6 +941,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_temperature
     target:
@@ -922,6 +990,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -967,6 +1039,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1018,6 +1094,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1069,6 +1149,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1119,6 +1203,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1169,6 +1257,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: climate.set_hvac_mode
     target:
@@ -1204,6 +1296,10 @@
   - condition: state
     entity_id: input_boolean.maintenance_mode
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - action: script.temporary_comfort_reset
   mode: single
@@ -2394,107 +2490,82 @@
   mode: single
 - id: '1776221000813'
   alias: Enable Maintenance Mode When Nest Is Turned Off
-  description: ''
   triggers:
   - entity_id: climate.thermostat
     to: 'off'
     trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - target:
       entity_id: input_boolean.maintenance_mode
     action: input_boolean.turn_on
-  - target:
-      entity_id: input_text.maintenance_log
-    data:
-      value: 'MAINTENANCE MODE ENABLED (Nest turned off) — {{ now().strftime(''%b
-        %d, %Y %I:%M %p'') }}
-
-        '
-    action: input_text.set_value
+  - data:
+      title: Maintenance Mode Enabled
+      message: Nest turned OFF — Maintenance Mode enabled.
+    action: persistent_notification.create
+  - data:
+      payload: "{\n  \"source\": \"maintenance\",\n  \"event\": \"\U0001F6E0️ Maintenance
+        Mode Enabled (Nest Off)\",\n  \"entity_id\": \"climate.thermostat\",\n  \"state\":
+        \"off\",\n  \"friendly_name\": \"Thermostat\",\n  \"timestamp\": \"{{ now().isoformat()
+        }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
 - id: '1776221067400'
-  alias: Maintenance Mode Enabled - Store Mode And Turn Off Nest
-  description: ''
+  alias: Maintenance Mode Enabled - Store Mode
   triggers:
   - entity_id: input_boolean.maintenance_mode
     to: 'on'
     trigger: state
-  conditions:
-  - condition: state
-    entity_id: input_boolean.maintenance_mode_manual
-    state: 'off'
   actions:
-  - action: input_text.set_value
-    target:
+  - target:
       entity_id: input_text.previous_hvac_mode
     data:
-      value: '{{ states(''climate.thermostat'') }}'
-  - action: climate.set_hvac_mode
-    target:
-      entity_id: climate.thermostat
-    data:
-      hvac_mode: 'off'
-  - action: input_text.set_value
-    target:
-      entity_id: input_text.maintenance_log
-    data:
-      value: 'MAINTENANCE MODE ENABLED (HA turned Nest off) — {{ now().strftime(''%b
-        %d, %Y %I:%M %p'') }}
-
-        '
+      value: '{{ state_attr(''climate.thermostat'',''hvac_mode'') }}'
+    action: input_text.set_value
+  mode: single
 - id: '1776221117731'
   alias: Disable Maintenance Mode When Nest Is Turned On
-  description: ''
   triggers:
   - entity_id: climate.thermostat
-    from: 'off'
     to:
     - heat
     - cool
     - heat_cool
     trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - target:
       entity_id: input_boolean.maintenance_mode
     action: input_boolean.turn_off
-  - target:
-      entity_id: input_text.maintenance_log
-    data:
-      value: 'MAINTENANCE MODE DISABLED (Nest turned on) — {{ now().strftime(''%b
-        %d, %Y %I:%M %p'') }}
-
-        '
-    action: input_text.set_value
-- id: '1776221152417'
-  alias: Maintenance Mode Disabled - Restore Previous Mode
-  description: ''
+  - data:
+      title: Maintenance Mode Disabled
+      message: Nest turned ON — Maintenance Mode disabled.
+    action: persistent_notification.create
+  - data:
+      payload: "{\n  \"source\": \"maintenance\",\n  \"event\": \"\U0001F527 Maintenance
+        Mode Disabled (Nest On)\",\n  \"entity_id\": \"climate.thermostat\",\n  \"state\":
+        \"{{ state_attr('climate.thermostat','hvac_mode') }}\",\n  \"friendly_name\":
+        \"Thermostat\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1776297587893'
+  alias: Manual Maintenance Mode Control
   triggers:
-  - entity_id: input_boolean.maintenance_mode
-    to: 'off'
+  - entity_id: input_boolean.maintenance_mode_manual
     trigger: state
   conditions:
   - condition: state
-    entity_id: input_boolean.maintenance_mode_manual
-    state: 'off'
-  actions:
-  - action: climate.set_hvac_mode
-    target:
-      entity_id: climate.thermostat
-    data:
-      hvac_mode: '{{ states(''input_text.previous_hvac_mode'') }}'
-  - action: input_text.set_value
-    target:
-      entity_id: input_text.maintenance_log
-    data:
-      value: 'MAINTENANCE MODE DISABLED (Nest restored to previous mode) — {{ now().strftime(''%b
-        %d, %Y %I:%M %p'') }}
-
-        '
-- id: '1776297587893'
-  alias: Manual Maintenance Mode Control
-  description: Manual toggle for Maintenance Mode without touching the thermostat
-  triggers:
-  - trigger: state
-    entity_id: input_boolean.maintenance_mode_manual
+    entity_id: input_boolean.hvac_paused
+    state:
+    - 'off'
   actions:
   - choose:
     - conditions:
@@ -2502,17 +2573,37 @@
         entity_id: input_boolean.maintenance_mode_manual
         state: 'on'
       sequence:
-      - action: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.maintenance_mode
+      - target:
+          entity_id: input_boolean.maintenance_mode_manual
+        action: input_boolean.turn_on
+        data: {}
+      - data:
+          title: Maintenance Mode Enabled
+          message: Manual enable — Maintenance Mode turned ON.
+        action: persistent_notification.create
+      - data:
+          payload: "{\n  \"source\": \"maintenance\",\n  \"event\": \"\U0001F6E0️
+            Maintenance Mode Enabled (Manual)\",\n  \"timestamp\": \"{{ now().isoformat()
+            }}\"\n}\n"
+        action: rest_command.slack_webhook_prod
     - conditions:
       - condition: state
         entity_id: input_boolean.maintenance_mode_manual
         state: 'off'
       sequence:
-      - action: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.maintenance_mode
+      - target:
+          entity_id: input_boolean.maintenance_mode_manual
+        action: input_boolean.turn_off
+        data: {}
+      - data:
+          title: Maintenance Mode Disabled
+          message: Manual disable — Maintenance Mode turned OFF.
+        action: persistent_notification.create
+      - data:
+          payload: "{\n  \"source\": \"maintenance\",\n  \"event\": \"\U0001F527 Maintenance
+            Mode Disabled (Manual)\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+        action: rest_command.slack_webhook_prod
+  mode: single
 - id: '1776299845847'
   alias: Milo – Backyard Sensors
   description: Forward meaningful Backyard environmental + security events to Milo
@@ -2727,4 +2818,799 @@
     data:
       message: ▶️ UptimeRobot monitoring resumed.
       target: '#project-home-assistant'
+  mode: single
+- id: '1784725995071'
+  alias: Notification - Vacation Mode Started Reminder
+  description: Notify if vacation event starts but Vacation Mode is off
+  triggers:
+  - entity_id: calendar.vacations
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  - condition: time
+    before: '22:00:00'
+  - condition: state
+    entity_id: input_boolean.vacation_mode_start_reminder_sent
+    state: 'off'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F6AA Vacation
+        Event Started — Vacation Mode Still Off\",\n  \"entity_id\": \"calendar.vacations\",\n
+        \ \"state\": \"{{ states('calendar.vacations') }}\",\n  \"friendly_name\":
+        \"Vacation Calendar\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  - target:
+      entity_id: input_boolean.vacation_mode_start_reminder_sent
+    action: input_boolean.turn_on
+  mode: single
+- id: '1784726594688'
+  alias: Notification - Vacation Mode Started 10 PM Safety Reminder
+  description: Remind if a vacation event is active but Vacation Mode is still off
+    at 10 PM
+  triggers:
+  - at: '22:00:00'
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: calendar.vacations
+    state:
+    - 'on'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode_reminder_sent
+    state: 'off'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F552 10 PM Reminder
+        — Vacation Mode Still Off\",\n  \"entity_id\": \"calendar.vacations\",\n  \"state\":
+        \"{{ states('calendar.vacations') }}\",\n  \"friendly_name\": \"Vacation Calendar\",\n
+        \ \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  - target:
+      entity_id: input_boolean.vacation_mode_reminder_sent
+    action: input_boolean.turn_on
+  mode: single
+- id: '1784727248340'
+  alias: Stage 2 - Pause HVAC Automations When Vacation Mode Turns On
+  description: Pauses HVAC logic when Vacation Mode is activated
+  triggers:
+  - entity_id: input_boolean.vacation_mode
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: calendar.vacations
+    state:
+    - 'on'
+  actions:
+  - action: input_boolean.turn_off
+    metadata: {}
+    target:
+      entity_id: input_boolean.maintenance_mode
+    data: {}
+  - action: input_boolean.turn_on
+    metadata: {}
+    target:
+      entity_id: input_boolean.hvac_paused
+    data: {}
+  mode: single
+- id: '1784727422777'
+  alias: Stage 1 - Vacation Mode Manual Activation Logic
+  description: Ensures clean system state when Vacation Mode is manually turned on
+  triggers:
+  - entity_id: input_boolean.vacation_mode
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: calendar.vacations
+    state:
+    - 'on'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F6E0️ Vacation
+        Mode Manual Activation\",\n  \"entity_id\": \"input_text.vacation_manual_log\",\n
+        \ \"state\": \"{{ states('input_text.vacation_manual_log') }}\",\n  \"friendly_name\":
+        \"Vacation Manual Activation Log\",\n  \"timestamp\": \"{{ now().isoformat()
+        }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784739668615'
+  alias: Safety - Vacation Heat Wave Protection
+  description: Adjusts cooling and humidity protection during high heat while in Vacation
+    Mode
+  triggers:
+  - entity_id: sensor.nws_tomorrow_high
+    above: 90
+    trigger: numeric_state
+  - entity_id: sensor.outdoor_temperature
+    above: 88
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''climate.thermostat'') != ''off'' }}
+
+      '
+  - condition: template
+    value_template: '{{ (now() - states.input_text.vacation_heat_wave_log.last_changed).total_seconds()
+      > 600 }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 78
+    action: climate.set_temperature
+  - target:
+      entity_id: climate.thermostat
+    data:
+      fan_mode: 'on'
+    action: climate.set_fan_mode
+  - target:
+      entity_id: input_boolean.hvac_paused
+    action: input_boolean.turn_on
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F31E Heat Wave
+        Protection Triggered\",\n  \"entity_id\": \"input_text.vacation_heat_wave_log\",\n
+        \ \"state\": \"{{ states('input_text.vacation_heat_wave_log') }}\",\n  \"friendly_name\":
+        \"Vacation Heat Wave Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784739841268'
+  alias: Safety - Vacation Humidity Protection
+  description: Activates humidity protection when outdoor humidity is high during
+    Vacation Mode
+  triggers:
+  - entity_id: sensor.outdoor_humidity
+    above: 80
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.outdoor_temperature
+    above: 75
+  - condition: numeric_state
+    entity_id: sensor.thermostat_humidity
+    above: 60
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''climate.thermostat'') != ''off'' }}
+
+      '
+  - condition: template
+    value_template: '{{ (now() - states.input_text.vacation_humidity_log.last_changed).total_seconds()
+      > 600 }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 76
+    action: climate.set_temperature
+  - target:
+      entity_id: climate.thermostat
+    data:
+      fan_mode: 'on'
+    action: climate.set_fan_mode
+  - target:
+      entity_id: input_boolean.hvac_paused
+    action: input_boolean.turn_on
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F4A7 Humidity
+        Protection Triggered\",\n  \"entity_id\": \"input_text.vacation_humidity_log\",\n
+        \ \"state\": \"{{ states('input_text.vacation_humidity_log') }}\",\n  \"friendly_name\":
+        \"Vacation Humidity Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784740024878'
+  alias: Safety - Vacation Cold Snap Protection
+  description: Protects the home during extreme cold while in Vacation Mode
+  triggers:
+  - entity_id: sensor.outdoor_temperature
+    below: 25
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''climate.thermostat'') != ''off'' }}
+
+      '
+  - condition: template
+    value_template: '{{ (now() - states.input_text.vacation_cold_snap_log.last_changed).total_seconds()
+      > 600 }}
+
+      '
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 62
+    action: climate.set_temperature
+  - target:
+      entity_id: input_boolean.hvac_paused
+    action: input_boolean.turn_on
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"❄️ Cold Snap Protection
+        Triggered\",\n  \"entity_id\": \"input_text.vacation_cold_snap_log\",\n  \"state\":
+        \"{{ states('input_text.vacation_cold_snap_log') }}\",\n  \"friendly_name\":
+        \"Vacation Cold Snap Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784744157728'
+  alias: Safety - Vacation Safety Band High
+  description: Prevents indoor temperature from exceeding 85°F during Vacation Mode
+  triggers:
+  - entity_id: sensor.indoor_temperature
+    above: 85
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''climate.thermostat'') != ''off'' }}
+
+      '
+  - condition: numeric_state
+    entity_id: sensor.thermostat_humidity
+    below: 70
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 78
+    action: climate.set_temperature
+  - target:
+      entity_id: climate.thermostat
+    data:
+      fan_mode: 'on'
+    action: climate.set_fan_mode
+  - target:
+      entity_id: input_boolean.hvac_paused
+    action: input_boolean.turn_on
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F4C8 Safety Band
+        High Triggered (Vacation)\",\n  \"entity_id\": \"input_text.vacation_safety_high_log\",\n
+        \ \"state\": \"{{ states('input_text.vacation_safety_high_log') }}\",\n  \"friendly_name\":
+        \"Vacation Safety High Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784744236572'
+  alias: Safety - Vacation Safety Band Low
+  description: Prevents indoor temperature from dropping below 55°F during Vacation
+    Mode
+  triggers:
+  - entity_id: sensor.indoor_temperature
+    below: 55
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''climate.thermostat'') != ''off'' }}
+
+      '
+  - condition: numeric_state
+    entity_id: sensor.thermostat_humidity
+    above: 20
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: 62
+    action: climate.set_temperature
+  - target:
+      entity_id: input_boolean.hvac_paused
+    action: input_boolean.turn_on
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F4C9 Safety Band
+        Low Triggered (Vacation)\",\n  \"entity_id\": \"input_text.vacation_safety_low_log\",\n
+        \ \"state\": \"{{ states('input_text.vacation_safety_low_log') }}\",\n  \"friendly_name\":
+        \"Vacation Safety Low Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784744410676'
+  alias: Notification - Vacation Daily Safety Audit
+  description: Sends a daily 6 AM safety report during Vacation Mode
+  triggers:
+  - at: 06:00:00
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''sensor.indoor_temperature'') not in [''unknown'',''unavailable'']
+      }}
+
+      '
+  - condition: template
+    value_template: '{{ (now() - states.input_text.vacation_daily_safety_log.last_changed).total_seconds()
+      > 600 }}
+
+      '
+  actions:
+  - target:
+      entity_id: input_text.vacation_mode_heartbeat
+    data:
+      value: Daily Audit — {{ now().isoformat() }}
+    action: input_text.set_value
+  - data:
+      payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F4CB Daily Safety
+        Audit Completed\",\n  \"entity_id\": \"input_text.vacation_daily_safety_log\",\n
+        \ \"state\": \"{{ states('input_text.vacation_daily_safety_log') }}\",\n  \"friendly_name\":
+        \"Vacation Daily Safety Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784747441270'
+  alias: HA Automation Engine Watchdog
+  description: Alerts if HA heartbeat stops updating for more than 1 hour
+  triggers:
+  - value_template: '{{ (as_timestamp(now()) - as_timestamp(states(''sensor.ha_heartbeat'')))
+      > 3600 }}
+
+      '
+    trigger: template
+  conditions:
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state:
+    - 'off'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"watchdog\",\n  \"event\": \":rotating_light: CRITICAL
+        — HA Automation Engine Stalled\",\n  \"entity_id\": \"sensor.ha_heartbeat\",\n
+        \ \"state\": \"{{ states('sensor.ha_heartbeat') }}\",\n  \"friendly_name\":
+        \"HA Heartbeat\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784747631783'
+  alias: Nest Stale Data Watchdog
+  description: Alerts if Nest stops updating for more than 1 hour
+  triggers:
+  - value_template: '{{ (as_timestamp(now()) - as_timestamp(states(''sensor.nest_last_update'')))
+      > 3600 }}
+
+      '
+    trigger: template
+  conditions:
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state:
+    - 'off'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"watchdog\",\n  \"event\": \":warning: WARNING —
+        Nest Stale Data\",\n  \"entity_id\": \"sensor.nest_last_update\",\n  \"state\":
+        \"{{ states('sensor.nest_last_update') }}\",\n  \"friendly_name\": \"Nest
+        Last Update\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784747741771'
+  alias: Tempest Stale Data Watchdog
+  description: Alerts if Tempest stops updating for more than 1 hour
+  triggers:
+  - value_template: '{{ (as_timestamp(now()) - as_timestamp(states(''sensor.tempest_last_update'')))
+      > 3600 }}
+
+      '
+    trigger: template
+  conditions:
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state:
+    - 'off'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"watchdog\",\n  \"event\": \":warning: WARNING —
+        Tempest Stale Data\",\n  \"entity_id\": \"sensor.tempest_last_update\",\n
+        \ \"state\": \"{{ states('sensor.tempest_last_update') }}\",\n  \"friendly_name\":
+        \"Tempest Last Update\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784747814811'
+  alias: HVAC Hardware Failure Detection
+  description: Detects when HVAC is running but indoor temperature drifts the wrong
+    direction for 1 hour
+  triggers:
+  - entity_id: climate.thermostat
+    to: cooling
+    for:
+      hours: 1
+    trigger: state
+  - entity_id: climate.thermostat
+    to: heating
+    for:
+      hours: 1
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: '{% set now_temp = states(''sensor.indoor_temperature'') | float
+      %} {% set last_temp = states(''sensor.indoor_temperature'') | float %} {% set
+      diff = now_temp - last_temp %} {{ diff > 1 or diff < -1 }}
+
+      '
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state:
+    - 'off'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"watchdog\",\n  \"event\": \":rotating_light: CRITICAL
+        — HVAC Failure Suspected\",\n  \"entity_id\": \"sensor.indoor_temperature\",\n
+        \ \"state\": \"{{ states('sensor.indoor_temperature') }}\",\n  \"friendly_name\":
+        \"Indoor Temperature\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784747898938'
+  alias: Indoor Temperature Drift Watchdog
+  description: Alerts if indoor temperature changes more than 2°F over 1 hour
+  triggers:
+  - entity_id: sensor.indoor_temperature
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: '{% set now_temp = states(''sensor.indoor_temperature'') | float
+      %} {% set last_time = states.sensor.indoor_temperature.last_changed %} {% set
+      last_temp = states(''sensor.indoor_temperature'') | float %} {% set diff = now_temp
+      - last_temp %} {{ (as_timestamp(now()) - as_timestamp(last_time)) > 3600 and
+      (diff > 2 or diff < -2) }}
+
+      '
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state:
+    - 'off'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"watchdog\",\n  \"event\": \":thermometer: WARNING
+        — Indoor Temperature Drift\",\n  \"entity_id\": \"sensor.indoor_temperature\",\n
+        \ \"state\": \"{{ states('sensor.indoor_temperature') }}\",\n  \"friendly_name\":
+        \"Indoor Temperature\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784773861533'
+  alias: HVAC Protection – Anomaly Response
+  description: Pauses cooling when HVAC anomaly score indicates a fault
+  triggers:
+  - entity_id: sensor.hvac_anomaly_score
+    above: 8
+    for:
+      minutes: 5
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: climate.thermostat
+    state: cool
+  - condition: numeric_state
+    entity_id: sensor.ac_runtime_current_cycle
+    above: 5
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state:
+    - 'off'
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: 'off'
+    action: climate.set_hvac_mode
+  - data:
+      payload: "{\n  \"source\": \"watchdog\",\n  \"event\": \":rotating_light: CRITICAL
+        — HVAC Protection Triggered\",\n  \"entity_id\": \"sensor.hvac_anomaly_score\",\n
+        \ \"state\": \"{{ states('sensor.hvac_anomaly_score') }}\",\n  \"friendly_name\":
+        \"HVAC Anomaly Score\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  - target:
+      entity_id: input_boolean.hvac_protection_active
+    action: input_boolean.turn_on
+  - delay:
+      minutes: 10
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: cool
+    action: climate.set_hvac_mode
+  - target:
+      entity_id: input_boolean.hvac_protection_active
+    action: input_boolean.turn_off
+  mode: single
+- id: '1784774631221'
+  alias: HVAC Protection – Recovery
+  description: Sends recovery notice and resets protection state
+  triggers:
+  - entity_id: input_boolean.hvac_protection_active
+    to: 'off'
+    for:
+      minutes: 1
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state:
+    - 'off'
+  actions:
+  - data:
+      payload: "{\n  \"source\": \"watchdog\",\n  \"event\": \":white_check_mark:
+        HVAC Protection Cleared\",\n  \"entity_id\": \"sensor.hvac_anomaly_score\",\n
+        \ \"state\": \"{{ states('sensor.hvac_anomaly_score') }}\",\n  \"friendly_name\":
+        \"HVAC Anomaly Score\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  - data:
+      name: HVAC Protection
+      message: System recovered and cooling resumed.
+      entity_id: climate.thermostat
+    action: logbook.log
+  mode: single
+- id: '1784775025451'
+  alias: Stage 3 - Vacation Return Prep Mode
+  description: Activates HVAC prep the night before returning from vacation
+  triggers:
+  - at: 00:00:00
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: "{{ (now().date() + timedelta(days=1)).isoformat() ==\n   states('input_text.vacation_return_date')
+      }}\n"
+  - condition: template
+    value_template: '{{ states(''climate.thermostat'') != ''off'' }}
+
+      '
+  actions:
+  - target:
+      entity_id: input_boolean.return_prep_mode
+    action: input_boolean.turn_on
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.outdoor_blend_temp
+        below: 45
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: 68
+        action: climate.set_temperature
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.outdoor_blend_temp
+        above: 45
+      sequence:
+      - target:
+          entity_id: climate.thermostat
+        data:
+          temperature: 74
+        action: climate.set_temperature
+  - target:
+      entity_id: input_text.vacation_mode_heartbeat
+    data:
+      value: Return Prep Activated — {{ now().isoformat() }}
+    action: input_text.set_value
+  - data:
+      payload: "{\n  \"source\": \"return\",\n  \"event\": \":house_with_garden: Midnight
+        Return Prep Mode Activated\",\n  \"entity_id\": \"input_boolean.return_prep_mode\",\n
+        \ \"state\": \"{{ states('input_boolean.return_prep_mode') }}\",\n  \"friendly_name\":
+        \"Return Prep Mode\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784776110965'
+  alias: Stage 4 - Vacation Mode Deactivation Logic
+  description: Restores HVAC when vacation mode ends
+  triggers:
+  - entity_id: input_boolean.vacation_mode
+    to: 'off'
+    trigger: state
+  conditions: []
+  actions:
+  - target:
+      entity_id: climate.thermostat
+    data:
+      temperature: '{{ states(''input_number.previous_hvac_setpoint'') | float }}'
+    action: climate.set_temperature
+  - target:
+      entity_id: climate.thermostat
+    data:
+      hvac_mode: '{{ states(''input_text.previous_hvac_mode'') }}'
+    action: climate.set_hvac_mode
+  - target:
+      entity_id:
+      - input_boolean.hvac_paused
+      - input_boolean.hvac_protection_active
+    action: input_boolean.turn_off
+  - target:
+      entity_id: input_text.vacation_mode_heartbeat
+    data:
+      value: Vacation Mode Deactivated — {{ now().isoformat() }}
+    action: input_text.set_value
+  - data:
+      payload: "{\n  \"source\": \"return\",\n  \"event\": \":house: Welcome Home
+        — HVAC Restored\",\n  \"indoor_temp\": \"{{ states('sensor.indoor_temperature')
+        }}\",\n  \"outdoor_temp\": \"{{ states('sensor.outdoor_blend_temp') }}\",\n
+        \ \"outdoor_humidity\": \"{{ states('sensor.outdoor_humidity') }}\",\n  \"hvac_mode\":
+        \"{{ states('input_text.previous_hvac_mode') }}\",\n  \"setpoint\": \"{{ states('input_number.previous_hvac_setpoint')
+        }}\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  - target:
+      entity_id: input_boolean.return_prep_mode
+    action: input_boolean.turn_off
+  mode: single
+- id: '1784777587927'
+  alias: Logging - Store Previous HVAC State Before Vacation Mode
+  description: Saves HVAC mode and setpoint when vacation mode turns on
+  triggers:
+  - entity_id: input_boolean.vacation_mode
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: calendar.vacations
+    state: 'on'
+  actions:
+  - target:
+      entity_id: input_text.previous_hvac_mode
+    data:
+      value: '{{ state_attr(''climate.thermostat'', ''hvac_mode'') }}'
+    action: input_text.set_value
+  - target:
+      entity_id: input_number.previous_hvac_setpoint
+    data:
+      value: '{{ state_attr(''climate.thermostat'', ''temperature'') | float }}'
+    action: input_number.set_value
+  mode: single
+- id: '1784777811183'
+  alias: Logging - Set Vacation Return Date
+  description: Updates the return date helper when a vacation-type event begins
+  triggers:
+  - entity_id:
+    - calendar.vacations
+    to:
+    - 'on'
+    trigger: state
+  conditions: []
+  actions:
+  - target:
+      entity_id: input_text.vacation_return_date
+    data:
+      value: '{{ state_attr(''calendar.vacations'', ''end_time'')[:10] }}'
+    action: input_text.set_value
+  mode: single
+- id: '1784811763342'
+  alias: HVAC Cycle Start Timestamp
+  description: Records the timestamp when AC cooling begins
+  triggers:
+  - entity_id: binary_sensor.ac_running
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.maintenance_mode
+    state:
+    - 'off'
+  actions:
+  - target:
+      entity_id: input_datetime.hvac_cycle_start
+    data:
+      datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+    action: input_datetime.set_datetime
+  mode: single
+- id: '1784864705957'
+  alias: Monitoring - Vacation Mode Heartbeat Writer
+  description: Writes heartbeat status to input_text for Vacation Mode
+  triggers:
+  - hours: /4
+    trigger: time_pattern
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''sensor.indoor_temperature'') not in [''unknown'',''unavailable'']
+      }}
+
+      '
+  actions:
+  - target:
+      entity_id: input_text.vacation_mode_heartbeat
+    data:
+      value: 'Indoor {{ states(''sensor.indoor_temperature'') }}°F • Humidity {{
+
+        states(''sensor.thermostat_humidity'') }}% • HVAC Vacation-Safe — {{
+
+        now().strftime(''%b %d, %Y %I:%M %p'') }}
+
+        '
+    action: input_text.set_value
+  mode: single
+- id: '1784864826166'
+  alias: Monitoring - Vacation Mode Heartbeat Log to Notion
+  description: Send Vacation Mode heartbeat entry to Notion
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.vacation_mode_heartbeat
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''input_text.vacation_mode_heartbeat'') not in [''unknown'',''unavailable'']
+      }}
+
+      '
+  actions:
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"event\": \"Heartbeat Monitor\",\n  \"category\": \"Vacation
+        Mode\",\n  \"details\": \"{{ states('input_text.vacation_mode_heartbeat')
+        }}\",\n  \"timestamp\": \"{{ now().isoformat() }}\",\n  \"season\": \"{{ states('input_select.current_season')
+        }}\",\n  \"source\": \"HA\"\n}\n"
+    action: rest_command.log_to_notion
+  mode: single
+- id: '1784864846980'
+  alias: Monitoring - Vacation Mode Heartbeat Log to Slack
+  description: Send Vacation Mode heartbeat entry to Slack
+  triggers:
+  - event_type: state_changed
+    event_data:
+      entity_id: input_text.vacation_mode_heartbeat
+    trigger: event
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  - condition: template
+    value_template: '{{ states(''input_text.vacation_mode_heartbeat'') not in [''unknown'',''unavailable'']
+      }}
+
+      '
+  actions:
+  - delay: 00:00:01
+  - data:
+      payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Heartbeat Monitor\",\n
+        \ \"entity_id\": \"input_text.vacation_mode_heartbeat\",\n  \"state\": \"{{
+        states('input_text.vacation_mode_heartbeat') }}\",\n  \"friendly_name\": \"Vacation
+        Mode Heartbeat\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+    action: rest_command.slack_webhook_prod
+  mode: single
+- id: '1784898706847'
+  alias: Notification - Reset Vacation Mode Reminder Sent
+  description: Resets reminder flag when vacation event ends
+  triggers:
+  - entity_id: calendar.vacations
+    to: 'off'
+    trigger: state
+  actions:
+  - target:
+      entity_id: input_boolean.vacation_mode_reminder_sent
+    action: input_boolean.turn_off
+  mode: single
+- id: '1784923967606'
+  alias: Notification - Reset Vacation Mode Start Reminder Sent
+  description: Resets start reminder flag when vacation event ends
+  triggers:
+  - entity_id: calendar.vacations
+    to: 'off'
+    trigger: state
+  actions:
+  - target:
+      entity_id: input_boolean.vacation_mode_start_reminder_sent
+    action: input_boolean.turn_off
   mode: single
