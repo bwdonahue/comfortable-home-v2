@@ -3,6 +3,85 @@
 All notable changes to **Comfortable Home v2** are documented here.  
 This project follows a simple, milestone-based versioning style.
 
+---
+
+## 2.7 — Vacation Mode System + Safety Bands + Return Prep (2026‑07‑24)
+
+### Added
+- Introduced full **Vacation Mode subsystem** with dedicated helpers:
+  - `input_boolean.vacation_mode`
+  - `input_boolean.hvac_paused`
+  - `input_boolean.return_prep_mode`
+  - `input_boolean.hard_weather_mode`
+  - `input_boolean.boost_mode` (integrated into safety logic)
+  - `input_text.vacation_mode_heartbeat`
+  - `input_text.vacation_safety_high_log`
+  - `input_text.vacation_safety_low_log`
+  - `input_text.vacation_cold_snap_log`
+  - `input_text.vacation_daily_safety_log`
+  - `input_text.vacation_return_date`
+
+- Added **11 dedicated Vacation Mode automations**, including:
+  - **Vacation Mode Activation (Calendar‑Driven)** — activates Vacation Mode at the start of the trip.
+  - **Vacation Mode Deactivation (Calendar‑Driven)** — disables Vacation Mode when the trip ends.
+  - **Safety — Vacation Safety Band High** — prevents indoor temperature from exceeding 85°F.
+  - **Safety — Vacation Safety Band Low** — prevents indoor temperature from dropping below 55°F.
+  - **Safety — Cold Snap Protection** — protects the home during extreme cold.
+  - **Safety — Heat Wave Protection** — protects the home during extreme heat.
+  - **Safety — Humidity Protection** — prevents high indoor humidity using `sensor.thermostat_humidity`.
+  - **Notification — Daily Safety Audit** — sends a 6 AM daily safety report.
+  - **Stage 3 — Return Prep Mode** — activates HVAC prep the night before returning.
+  - **Stage 4 — Return Prep Completion** — restores normal HVAC behavior after arrival.
+  - **Vacation Heartbeat Writer** — writes a live status heartbeat every 15 minutes.
+
+- Added **Slack webhook notifications** (`rest_command.slack_webhook_prod`) for:
+  - Safety Band High triggers  
+  - Safety Band Low triggers  
+  - Cold Snap / Heat Wave events  
+  - Daily Safety Audit  
+  - Return Prep activation  
+  - Vacation Mode ON/OFF transitions  
+
+- Added **cooldown helpers** for all safety automations to prevent rapid re‑triggering:
+  - Cold Snap  
+  - Heat Wave  
+  - Safety Band High  
+  - Safety Band Low  
+  - Humidity Protection  
+  - Daily Safety Audit  
+
+- Added **Hard Weather Mode** integration:
+  - Auto‑activates based on Tempest + forecast  
+  - Adjusts runtime expectations  
+  - Adjusts anomaly thresholds  
+  - Increases cooling aggressiveness  
+
+- Added **HVAC Paused** subsystem:
+  - Pauses all adaptive logic during Vacation Mode  
+  - Prevents thermostat automation conflicts  
+  - Ensures safe HVAC operation during extended absence  
+
+### Improved
+- Replaced invalid `state_not` conditions with safe template guards across all automations.
+- Added first‑run protection for all cooldown templates using `last_changed is not none`.
+- Standardized Slack JSON payloads for consistent logging and ingestion.
+- Unified timestamp formatting across all Vacation Mode logs.
+- Added guardrails to prevent:
+  - thermostat off‑state misfires  
+  - stale sensor triggers  
+  - runaway safety loops  
+  - premature Return Prep activation  
+- Updated humidity logic to use `sensor.thermostat_humidity` instead of non‑existent entities.
+- Cleaned up all numeric_state conditions for reliability and HA compatibility.
+
+### Notes
+This release introduces the **Comfortable Home V2 Vacation Brain** — a fully autonomous, safety‑aware, seasonally intelligent system designed for extended travel.  
+It includes robust safety bands, cold/heat protection, daily audits, Slack notifications, Return Prep, and a full heartbeat system.  
+All logic is hardened with cooldowns, guardrails, and sensor validation.  
+This subsystem lays the foundation for Phase 2: **presence‑driven activation**, early‑return detection, accidental toggle protection, and calendar‑presence fusion.
+
+---
+
 ## 2.6 — Maintenance Mode System + Slack/HA Notifications (2026‑07‑14)
 
 ### Added
@@ -34,8 +113,9 @@ This release introduces a fully self‑contained Maintenance Mode engine designe
 All actions are logged, all transitions are visible, and the system now includes multi‑channel notifications for complete operational awareness.  
 This subsystem lays the groundwork for future enhancements such as dashboard banners, restart‑blocked warnings, and maintenance analytics.
 
+---
 
-## v1.0 — Notion Logging + Seasonal Architecture Overhaul (2026-03-04)
+## v1.0 — Notion Logging + Seasonal Architecture Overhaul (2026‑03‑04)
 
 - Added unified seasonal activation automations (Spring, Summer, Fall, Winter)
 - Added input_select.current_season for season-aware logic
@@ -46,7 +126,9 @@ This subsystem lays the groundwork for future enhancements such as dashboard ban
 - Added baseline, comfort, and weather-driven modes per season
 - Prepared system for AI-generated summaries and daily climate reports
 
-## 2.5.3 — Shoulder Season Engine + Dashboard Tiles (2026-02-25)
+---
+
+## 2.5.3 — Shoulder Season Engine + Dashboard Tiles (2026‑02‑25)
 
 ### Added
 - Full Spring/Fall Shoulder Season engine with mode detection:
@@ -74,6 +156,8 @@ This subsystem lays the groundwork for future enhancements such as dashboard ban
 This release is the first full implementation of the Shoulder Season engine
 within Comfortable Home v2, extending Winter-style clarity into Spring and Fall.
 
+---
+
 ## 2.5.2 — UptimeRobot Pause Hotfix (2026‑02‑15)
 
 ### Fixed
@@ -85,7 +169,9 @@ within Comfortable Home v2, extending Winter-style clarity into Spring and Fall.
 This was a targeted **hotfix** applied outside the normal feature workflow to
 address a post‑migration regression. No other systems were affected.
 
-## 2.5.1 — Seasonal Sunlight Engine + Dashboard Indicators (2026-01-31)
+---
+
+## 2.5.1 — Seasonal Sunlight Engine + Dashboard Indicators (2026‑01‑31)
 
 ### Added
 - Sunny/Cloudy indicator system using dedicated input_booleans for Winter and Summer modes
@@ -106,16 +192,16 @@ address a post‑migration regression. No other systems were affected.
 
 ---
 
-## **v2.5 — Feb 2026**  
+## v2.5 — Feb 2026  
 **Seasonal Email Templates + SendGrid Delivery**
 
-**Added**
+### Added
 - Introduced dedicated HTML email templates stored in `/config/www/email_templates/`
 - Added seasonal templates: `winter.html`, `spring.html`, `summer.html`, `fall.html`
 - Implemented SendGrid email delivery using `notify.sendgrid`
 - Added “Last Seasonal Email Sent” timestamp sensors for visibility
 
-**Updated**
+### Updated
 - Seasonal activation automations now trigger matching email‑sending automations
 - Email‑sending automations now:
   - Load HTML templates via `!include www/email_templates/<season>.html`
@@ -123,11 +209,11 @@ address a post‑migration regression. No other systems were affected.
   - Log send events
   - Update timestamp sensors
 
-**Added — Preview System**
+### Added — Preview System
 - Added dashboard Preview Buttons for each seasonal email
 - Preview buttons manually trigger the email‑sending automation without activating the season
 
-**Improved Architecture**
+### Improved Architecture
 - Split seasonal logic into:
   1. **Season Activation Automation** — handles mode switching, thermostat adjustments, sensor updates, and triggers the email automation  
   2. **Email Sending Automation** — loads HTML, sends email, logs timestamp  
@@ -183,4 +269,3 @@ address a post‑migration regression. No other systems were affected.
 - Early visual feedback experiments  
 
 ---
-
