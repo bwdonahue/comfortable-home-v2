@@ -1347,7 +1347,7 @@
   - action: notify.the_donahue_soto_house
     data:
       message: "\U0001F342 Fall Shoulder Season activated."
-      target: '#comfortable-home-feed'
+      target: '#project-home-assistant'
   mode: single
 - id: '1769841042882'
   alias: Send Spring Shoulder Email
@@ -1378,7 +1378,7 @@
   - action: notify.the_donahue_soto_house
     data:
       message: "\U0001F324️ Spring Shoulder Season activated."
-      target: '#comfortable-home-feed'
+      target: '#project-home-assistant'
   mode: single
 - id: '1769841892716'
   alias: Send Summer Email
@@ -1408,7 +1408,7 @@
   - action: notify.the_donahue_soto_house
     data:
       message: ☀️ Summer Mode activated.
-      target: '#comfortable-home-feed'
+      target: '#project-home-assistant'
   mode: single
 - id: '1769842193327'
   alias: Send Winter Email
@@ -1438,7 +1438,7 @@
   - action: notify.the_donahue_soto_house
     data:
       message: ❄️ Winter Mode activated.
-      target: '#comfortable-home-feed'
+      target: '#project-home-assistant'
   mode: single
 - id: '1770260562783'
   alias: Spring + Fall 6 Degree Safety Gap Enforcement
@@ -1568,7 +1568,7 @@
   - action: notify.the_donahue_soto_house
     data:
       message: "\U0001F331 Spring reminder email sent."
-      target: '#comfortable-home-feed'
+      target: '#project-home-assistant'
   mode: single
 - id: '1771994259227'
   alias: Fall Pre-Season Email (Reminder)
@@ -1589,7 +1589,7 @@
   - action: notify.the_donahue_soto_house
     data:
       message: "\U0001F341 Fall reminder email sent."
-      target: '#comfortable-home-feed'
+      target: '#project-home-assistant'
   mode: single
 - id: '1772316486064'
   alias: Winter Morning Comfort Log to Notion
@@ -1743,7 +1743,7 @@
   triggers:
   - event_type: state_changed
     event_data:
-      entity_id: input_text.fall_baseline_log
+      entity_id: input_text.fall_shoulder_baseline_log
     trigger: event
   conditions:
   - condition: state
@@ -1753,8 +1753,8 @@
   - delay: 00:00:01
   - data:
       payload: "{\n  \"event\": \"Fall Baseline\",\n  \"category\": \"Mode\",\n  \"details\":
-        \"{{ states('input_text.fall_baseline_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
-        }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
+        \"{{ states('input_text.fall_shoulder_baseline_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
     action: rest_command.log_to_notion
   mode: single
 - id: '1772330556997'
@@ -1763,7 +1763,7 @@
   triggers:
   - event_type: state_changed
     event_data:
-      entity_id: input_text.fall_cool_day_log
+      entity_id: input_text.fall_shoulder_cool_day_log
     trigger: event
   conditions:
   - condition: state
@@ -1773,8 +1773,8 @@
   - delay: 00:00:01
   - data:
       payload: "{\n  \"event\": \"Fall Cool Day\",\n  \"category\": \"Mode\",\n  \"details\":
-        \"{{ states('input_text.fall_cool_day_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
-        }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
+        \"{{ states('input_text.fall_shoulder_cool_day_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
     action: rest_command.log_to_notion
   mode: single
 - id: '1772330642399'
@@ -1783,7 +1783,7 @@
   triggers:
   - event_type: state_changed
     event_data:
-      entity_id: input_text.fall_warm_day_log
+      entity_id: input_text.fall_shoulder_warm_day_log
     trigger: event
   conditions:
   - condition: state
@@ -1793,8 +1793,8 @@
   - delay: 00:00:01
   - data:
       payload: "{\n  \"event\": \"Fall Warm Day\",\n  \"category\": \"Mode\",\n  \"details\":
-        \"{{ states('input_text.fall_warm_day_log') }}\",\n  \"timestamp\": \"{{ now().isoformat()
-        }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
+        \"{{ states('input_text.fall_shoulder_warm_day_log') }}\",\n  \"timestamp\":
+        \"{{ now().isoformat() }}\",\n  \"season\": \"Fall\",\n  \"source\": \"HA\"\n}\n"
     action: rest_command.log_to_notion
   mode: single
 - id: '1772589196436'
@@ -2040,7 +2040,7 @@
   triggers:
   - event_type: state_changed
     event_data:
-      entity_id: input_text.fall_baseline_log
+      entity_id: input_text.fall_shoulder_baseline_log
     trigger: event
   conditions:
   - condition: state
@@ -2050,7 +2050,7 @@
   - delay: 00:00:01
   - data:
       payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Fall Baseline\",\n
-        \ \"entity_id\": \"input_text.fall_baseline_log\",\n  \"state\": \"{{ states('input_text.fall_baseline_log')
+        \ \"entity_id\": \"input_text.fall_baseline_log\",\n  \"state\": \"{{ states('input_text.fall_shoulder_baseline_log')
         }}\",\n  \"friendly_name\": \"Fall Baseline Log\",\n  \"timestamp\": \"{{
         now().isoformat() }}\"\n}\n"
     action: rest_command.slack_webhook_prod
@@ -2268,7 +2268,7 @@
   triggers:
   - event_type: state_changed
     event_data:
-      entity_id: input_text.fall_cool_day_log
+      entity_id: input_text.fall_shoulder_cool_day_log
     trigger: event
   conditions:
   - condition: state
@@ -2279,9 +2279,9 @@
   - action: rest_command.slack_webhook_prod
     data:
       payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Fall Cool Day\",\n
-        \ \"entity_id\": \"input_text.fall_cool_day_log\",\n  \"state\": \"{{ states('input_text.fall_cool_day_log')
-        }}\",\n  \"friendly_name\": \"Fall Cool Day Log\",\n  \"timestamp\": \"{{
-        now().isoformat() }}\"\n}\n"
+        \ \"entity_id\": \"input_text.fall_shoulder_warm_day_log\",\n  \"state\":
+        \"{{ states('input_text.fall_shoulder_cool_day_log') }}\",\n  \"friendly_name\":
+        \"Fall Cool Day Log\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
   mode: single
 - id: '1773529664365'
   alias: Fall Warm Day Log to Slack
@@ -2289,7 +2289,7 @@
   triggers:
   - event_type: state_changed
     event_data:
-      entity_id: input_text.fall_warm_day_log
+      entity_id: input_text.fall_shoulder_warm_day_log
     trigger: event
   conditions:
   - condition: state
@@ -2300,7 +2300,7 @@
   - action: rest_command.slack_webhook_prod
     data:
       payload: "{\n  \"source\": \"home_assistant\",\n  \"event\": \"Fall Warm Day\",\n
-        \ \"entity_id\": \"input_text.fall_warm_day_log\",\n  \"state\": \"{{ states('input_text.fall_warm_day_log')
+        \ \"entity_id\": \"input_text.fall_warm_day_log\",\n  \"state\": \"{{ states('input_text.fall_shoulder_warm_day_log')
         }}\",\n  \"friendly_name\": \"Fall Warm Day Log\",\n  \"timestamp\": \"{{
         now().isoformat() }}\"\n}\n"
   mode: single
@@ -2876,7 +2876,7 @@
     action: input_boolean.turn_on
   mode: single
 - id: '1784727248340'
-  alias: Stage 2 - Pause HVAC Automations When Vacation Mode Turns On
+  alias: Stage 2A - Pause HVAC Automations When Vacation Mode Turns On
   description: Pauses HVAC logic when Vacation Mode is activated
   triggers:
   - entity_id: input_boolean.vacation_mode
@@ -2958,6 +2958,11 @@
   - target:
       entity_id: input_boolean.hvac_paused
     action: input_boolean.turn_on
+  - target:
+      entity_id: input_text.vacation_heat_wave_log
+    data:
+      value: Heat Wave Protection Triggered — {{ now().isoformat() }}
+    action: input_text.set_value
   - data:
       payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F31E Heat Wave
         Protection Triggered\",\n  \"entity_id\": \"input_text.vacation_heat_wave_log\",\n
@@ -3042,6 +3047,11 @@
   - target:
       entity_id: input_boolean.hvac_paused
     action: input_boolean.turn_on
+  - target:
+      entity_id: input_text.vacation_cold_snap_log
+    data:
+      value: Cold Snap Protection Triggered — {{ now().isoformat() }}
+    action: input_text.set_value
   - data:
       payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"❄️ Cold Snap Protection
         Triggered\",\n  \"entity_id\": \"input_text.vacation_cold_snap_log\",\n  \"state\":
@@ -3148,6 +3158,11 @@
       entity_id: input_text.vacation_mode_heartbeat
     data:
       value: Daily Audit — {{ now().isoformat() }}
+    action: input_text.set_value
+  - target:
+      entity_id: input_text.vacation_daily_safety_log
+    data:
+      value: Daily Safety Audit Completed — {{ now().isoformat() }}
     action: input_text.set_value
   - data:
       payload: "{\n  \"source\": \"vacation\",\n  \"event\": \"\U0001F4CB Daily Safety
@@ -3366,6 +3381,9 @@
   - condition: state
     entity_id: input_boolean.vacation_mode
     state: 'on'
+  - condition: state
+    entity_id: input_boolean.return_prep_mode
+    state: 'off'
   - condition: template
     value_template: "{{ (now().date() + timedelta(days=1)).isoformat() ==\n   states('input_text.vacation_return_date')
       }}\n"
@@ -3412,44 +3430,51 @@
   mode: single
 - id: '1784776110965'
   alias: Stage 4 - Vacation Mode Deactivation Logic
-  description: Restores HVAC when vacation mode ends
+  description: Restores HVAC whenever vacation mode ends
   triggers:
   - entity_id: input_boolean.vacation_mode
     to: 'off'
     trigger: state
-  conditions: []
+  - event: start
+    trigger: homeassistant
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
   actions:
-  - target:
-      entity_id: climate.thermostat
-    data:
-      temperature: '{{ states(''input_number.previous_hvac_setpoint'') | float }}'
-    action: climate.set_temperature
   - target:
       entity_id: climate.thermostat
     data:
       hvac_mode: '{{ states(''input_text.previous_hvac_mode'') }}'
     action: climate.set_hvac_mode
   - target:
-      entity_id:
-      - input_boolean.hvac_paused
-      - input_boolean.hvac_protection_active
-    action: input_boolean.turn_off
+      entity_id: climate.thermostat
+    data:
+      temperature: '{{ states(''input_number.previous_hvac_setpoint'') | float }}'
+    action: climate.set_temperature
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.hvac_paused
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.hvac_protection_active
   - target:
       entity_id: input_text.vacation_mode_heartbeat
     data:
       value: Vacation Mode Deactivated — {{ now().isoformat() }}
     action: input_text.set_value
   - data:
-      payload: "{\n  \"source\": \"return\",\n  \"event\": \":house: Welcome Home
-        — HVAC Restored\",\n  \"indoor_temp\": \"{{ states('sensor.indoor_temperature')
-        }}\",\n  \"outdoor_temp\": \"{{ states('sensor.outdoor_blend_temp') }}\",\n
-        \ \"outdoor_humidity\": \"{{ states('sensor.outdoor_humidity') }}\",\n  \"hvac_mode\":
-        \"{{ states('input_text.previous_hvac_mode') }}\",\n  \"setpoint\": \"{{ states('input_number.previous_hvac_setpoint')
-        }}\",\n  \"timestamp\": \"{{ now().isoformat() }}\"\n}\n"
+      payload: "{\n  \"text\": \":house: *Welcome Home — HVAC Restored*\\n\n  • *Indoor
+        Temp:* {{ states('sensor.indoor_temperature') or 'unknown' }}°F\\n\n  • *Outdoor
+        Temp:* {{ states('sensor.outdoor_blend_temp') or 'unknown' }}°F\\n\n  • *Humidity:*
+        {{ states('sensor.outdoor_humidity') or 'unknown' }}%\\n\n  • *HVAC Mode:*
+        {{ states('input_text.previous_hvac_mode') or 'unknown' }}\\n\n  • *Setpoint:*
+        {{ states('input_number.previous_hvac_setpoint') or 'unknown' }}°F\\n\n  •
+        *Timestamp:* {{ now().isoformat() }}\\n\"\n}\n"
     action: rest_command.slack_webhook_prod
-  - target:
+  - action: input_boolean.turn_off
+    target:
       entity_id: input_boolean.return_prep_mode
-    action: input_boolean.turn_off
   mode: single
 - id: '1784777587927'
   alias: Logging - Store Previous HVAC State Before Vacation Mode
@@ -3613,4 +3638,31 @@
   - target:
       entity_id: input_boolean.vacation_mode_start_reminder_sent
     action: input_boolean.turn_off
+  mode: single
+- id: '1785936671091'
+  alias: Stage 2B - Store Previous HVAC State
+  description: Saves HVAC mode and setpoint when Vacation Mode is activated
+  triggers:
+  - entity_id: input_boolean.vacation_mode
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  actions:
+  - target:
+      entity_id: input_text.previous_hvac_mode
+    data:
+      value: "{% set mode = state_attr('climate.thermostat', 'hvac_mode') %} {% if
+        mode is not none %}\n  {{ mode }}\n{% else %}\n  {{ states('climate.thermostat')
+        }}\n{% endif %}\n"
+    action: input_text.set_value
+  - target:
+      entity_id: input_number.previous_hvac_setpoint
+    data:
+      value: "{% set temp = state_attr('climate.thermostat', 'temperature') %} {%
+        if temp is not none %}\n  {{ temp | float }}\n{% else %}\n  {{ states('climate.thermostat')
+        | float(default=72) }}\n{% endif %}\n"
+    action: input_number.set_value
   mode: single
